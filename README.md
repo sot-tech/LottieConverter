@@ -22,7 +22,7 @@ Parameters:
 * resolution - size in pixels of out image, shoul be in `SIZExSIZE` format, default `128x128`
 * option - depends of type, default 0 for all:
     * `png` - which frame in percents to extract, i.e. if set to `20`, and there's 200 frames in animation, 40th frame will be extracted
-    * `pngs` - frame rate to try to extract images, i.e. if animation framerate is 30, and `option` set to 10 every 3rd image will be extracted,
-    if animation frame rate is 10, and `option` set to 30 every image will be written 3 times
+    * `pngs` - frame rate to try to extract images, i.e. if animation framerate is 30, and `option` set to 10 every 3rd frame will be extracted,
+    if animation frame rate is 10, and `option` set to 30 every frame will be written 3 times
     * `gif` - background color (RGB) to be set unstead fully transparent pixels, format must be same as C constant representation (`12345`, `0x123abc`, `01267` etc.)
 
