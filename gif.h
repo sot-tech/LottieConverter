@@ -708,7 +708,7 @@ struct GifWriter {
 	long int delaypos;
 };
 
-#define GifWriter_init(_X_) {.f = (_X_), .oldImage = NULL, .firstFrame = true, .delaypos = -1}
+#define GIF_WRITER_INIT(_X_) {.f = (_X_), .oldImage = NULL, .firstFrame = true, .delaypos = -1}
 
 // Creates a gif file.
 // The input GIFWriter is assumed to be uninitialized.

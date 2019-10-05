@@ -1,0 +1,148 @@
+Parameters: AnimatedSticker.tgs - gif 256x256 30
+==20129== Memcheck, a memory error detector
+==20129== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
+==20129== Using Valgrind-3.13.0 and LibVEX; rerun with -h for copyright info
+==20129== Command: dist/Debug/GNU-Linux/lottieconverter AnimatedSticker.tgs - gif 256x256 30
+==20129== 
+--20129-- Valgrind options:
+--20129--    --tool=memcheck
+--20129--    --leak-check=full
+--20129--    --show-reachable=yes
+--20129--    --track-origins=yes
+--20129--    -v
+--20129-- Contents of /proc/version:
+--20129--   Linux version 5.0.0-31-lowlatency (buildd@lgw01-amd64-046) (gcc version 7.4.0 (Ubuntu 7.4.0-1ubuntu1~18.04.1)) #33~18.04.1-Ubuntu SMP PREEMPT Tue Oct 1 11:08:13 UTC 2019
+--20129-- 
+--20129-- Arch and hwcaps: AMD64, LittleEndian, amd64-cx16-lzcnt-rdtscp-sse3-avx-avx2-bmi
+--20129-- Page sizes: currently 4096, max supported 4096
+--20129-- Valgrind library directory: /usr/lib/valgrind
+--20129-- Reading syms from /home/sot/Projects/LottieConverter/dist/Debug/GNU-Linux/lottieconverter
+--20129-- Reading syms from /lib/x86_64-linux-gnu/ld-2.27.so
+--20129--   Considering /lib/x86_64-linux-gnu/ld-2.27.so ..
+--20129--   .. CRC mismatch (computed 1b7c895e wanted 2943108a)
+--20129--   Considering /usr/lib/debug/lib/x86_64-linux-gnu/ld-2.27.so ..
+--20129--   .. CRC is valid
+--20129-- Reading syms from /usr/lib/valgrind/memcheck-amd64-linux
+--20129--   Considering /usr/lib/valgrind/memcheck-amd64-linux ..
+--20129--   .. CRC mismatch (computed c25f395c wanted 0a9602a8)
+--20129--    object doesn't have a symbol table
+--20129--    object doesn't have a dynamic symbol table
+--20129-- Scheduler: using generic scheduler lock implementation.
+--20129-- Reading suppressions file: /usr/lib/valgrind/default.supp
+==20129== embedded gdbserver: reading from /tmp/vgdb-pipe-from-vgdb-to-20129-by-sot-on-???
+==20129== embedded gdbserver: writing to   /tmp/vgdb-pipe-to-vgdb-from-20129-by-sot-on-???
+==20129== embedded gdbserver: shared mem   /tmp/vgdb-pipe-shared-mem-vgdb-20129-by-sot-on-???
+==20129== 
+==20129== TO CONTROL THIS PROCESS USING vgdb (which you probably
+==20129== don't want to do, unless you know exactly what you're doing,
+==20129== or are doing some strange experiment):
+==20129==   /usr/lib/valgrind/../../bin/vgdb --pid=20129 ...command...
+==20129== 
+==20129== TO DEBUG THIS PROCESS USING GDB: start GDB like this
+==20129==   /path/to/gdb dist/Debug/GNU-Linux/lottieconverter
+==20129== and then give GDB the following command
+==20129==   target remote | /usr/lib/valgrind/../../bin/vgdb --pid=20129
+==20129== --pid is optional if only one valgrind process is running
+==20129== 
+--20129-- REDIR: 0x401f2f0 (ld-linux-x86-64.so.2:strlen) redirected to 0x58060901 (???)
+--20129-- REDIR: 0x401f0d0 (ld-linux-x86-64.so.2:index) redirected to 0x5806091b (???)
+--20129-- Reading syms from /usr/lib/valgrind/vgpreload_core-amd64-linux.so
+--20129--   Considering /usr/lib/valgrind/vgpreload_core-amd64-linux.so ..
+--20129--   .. CRC mismatch (computed 4b63d83e wanted 670599e6)
+--20129--    object doesn't have a symbol table
+--20129-- Reading syms from /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so
+--20129--   Considering /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so ..
+--20129--   .. CRC mismatch (computed a4b37bee wanted 8ad4dc94)
+--20129--    object doesn't have a symbol table
+==20129== WARNING: new redirection conflicts with existing -- ignoring it
+--20129--     old: 0x0401f2f0 (strlen              ) R-> (0000.0) 0x58060901 ???
+--20129--     new: 0x0401f2f0 (strlen              ) R-> (2007.0) 0x04c32db0 strlen
+--20129-- REDIR: 0x401d360 (ld-linux-x86-64.so.2:strcmp) redirected to 0x4c33ee0 (strcmp)
+--20129-- REDIR: 0x401f830 (ld-linux-x86-64.so.2:mempcpy) redirected to 0x4c374f0 (mempcpy)
+--20129-- Reading syms from /lib/x86_64-linux-gnu/libz.so.1.2.11
+--20129--    object doesn't have a symbol table
+--20129-- Reading syms from /usr/lib/x86_64-linux-gnu/libpng16.so.16.34.0
+--20129--    object doesn't have a symbol table
+--20129-- Reading syms from /usr/lib/librlottie.so.0.0.1
+--20129-- Reading syms from /usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.25
+--20129--    object doesn't have a symbol table
+--20129-- Reading syms from /lib/x86_64-linux-gnu/libgcc_s.so.1
+--20129--    object doesn't have a symbol table
+--20129-- Reading syms from /lib/x86_64-linux-gnu/libc-2.27.so
+--20129--   Considering /lib/x86_64-linux-gnu/libc-2.27.so ..
+--20129--   .. CRC mismatch (computed b1c74187 wanted 042cc048)
+--20129--   Considering /usr/lib/debug/lib/x86_64-linux-gnu/libc-2.27.so ..
+--20129--   .. CRC is valid
+--20129-- Reading syms from /lib/x86_64-linux-gnu/libm-2.27.so
+--20129--   Considering /lib/x86_64-linux-gnu/libm-2.27.so ..
+--20129--   .. CRC mismatch (computed 7feae033 wanted b29b2508)
+--20129--   Considering /usr/lib/debug/lib/x86_64-linux-gnu/libm-2.27.so ..
+--20129--   .. CRC is valid
+--20129-- Reading syms from /lib/x86_64-linux-gnu/libpthread-2.27.so
+--20129--   Considering /usr/lib/debug/.build-id/28/c6aade70b2d40d1f0f3d0a1a0cad1ab816448f.debug ..
+--20129--   .. build-id is valid
+--20129-- Reading syms from /lib/x86_64-linux-gnu/libdl-2.27.so
+--20129--   Considering /lib/x86_64-linux-gnu/libdl-2.27.so ..
+--20129--   .. CRC mismatch (computed bd82fa02 wanted d1fdccc9)
+--20129--   Considering /usr/lib/debug/lib/x86_64-linux-gnu/libdl-2.27.so ..
+--20129--   .. CRC is valid
+--20129-- REDIR: 0x5b02c70 (libc.so.6:memmove) redirected to 0x4a2a6e0 (_vgnU_ifunc_wrapper)
+--20129-- REDIR: 0x5b01d40 (libc.so.6:strncpy) redirected to 0x4a2a6e0 (_vgnU_ifunc_wrapper)
+--20129-- REDIR: 0x5b02f50 (libc.so.6:strcasecmp) redirected to 0x4a2a6e0 (_vgnU_ifunc_wrapper)
+--20129-- REDIR: 0x5b01790 (libc.so.6:strcat) redirected to 0x4a2a6e0 (_vgnU_ifunc_wrapper)
+--20129-- REDIR: 0x5b01d70 (libc.so.6:rindex) redirected to 0x4a2a6e0 (_vgnU_ifunc_wrapper)
+--20129-- REDIR: 0x5b047c0 (libc.so.6:rawmemchr) redirected to 0x4a2a6e0 (_vgnU_ifunc_wrapper)
+--20129-- REDIR: 0x5b02de0 (libc.so.6:mempcpy) redirected to 0x4a2a6e0 (_vgnU_ifunc_wrapper)
+--20129-- REDIR: 0x5b02c10 (libc.so.6:bcmp) redirected to 0x4a2a6e0 (_vgnU_ifunc_wrapper)
+--20129-- REDIR: 0x5b01d00 (libc.so.6:strncmp) redirected to 0x4a2a6e0 (_vgnU_ifunc_wrapper)
+--20129-- REDIR: 0x5b01800 (libc.so.6:strcmp) redirected to 0x4a2a6e0 (_vgnU_ifunc_wrapper)
+--20129-- REDIR: 0x5b02d40 (libc.so.6:memset) redirected to 0x4a2a6e0 (_vgnU_ifunc_wrapper)
+--20129-- REDIR: 0x5b200f0 (libc.so.6:wcschr) redirected to 0x4a2a6e0 (_vgnU_ifunc_wrapper)
+--20129-- REDIR: 0x5b01ca0 (libc.so.6:strnlen) redirected to 0x4a2a6e0 (_vgnU_ifunc_wrapper)
+--20129-- REDIR: 0x5b01870 (libc.so.6:strcspn) redirected to 0x4a2a6e0 (_vgnU_ifunc_wrapper)
+--20129-- REDIR: 0x5b02fa0 (libc.so.6:strncasecmp) redirected to 0x4a2a6e0 (_vgnU_ifunc_wrapper)
+--20129-- REDIR: 0x5b01840 (libc.so.6:strcpy) redirected to 0x4a2a6e0 (_vgnU_ifunc_wrapper)
+--20129-- REDIR: 0x5b030e0 (libc.so.6:memcpy@@GLIBC_2.14) redirected to 0x4a2a6e0 (_vgnU_ifunc_wrapper)
+--20129-- REDIR: 0x5b01da0 (libc.so.6:strpbrk) redirected to 0x4a2a6e0 (_vgnU_ifunc_wrapper)
+--20129-- REDIR: 0x5b017c0 (libc.so.6:index) redirected to 0x4a2a6e0 (_vgnU_ifunc_wrapper)
+--20129-- REDIR: 0x5b01c70 (libc.so.6:strlen) redirected to 0x4a2a6e0 (_vgnU_ifunc_wrapper)
+--20129-- REDIR: 0x5b0c6c0 (libc.so.6:memrchr) redirected to 0x4a2a6e0 (_vgnU_ifunc_wrapper)
+--20129-- REDIR: 0x5b02ff0 (libc.so.6:strcasecmp_l) redirected to 0x4a2a6e0 (_vgnU_ifunc_wrapper)
+--20129-- REDIR: 0x5b02be0 (libc.so.6:memchr) redirected to 0x4a2a6e0 (_vgnU_ifunc_wrapper)
+--20129-- REDIR: 0x5b20eb0 (libc.so.6:wcslen) redirected to 0x4a2a6e0 (_vgnU_ifunc_wrapper)
+--20129-- REDIR: 0x5b02050 (libc.so.6:strspn) redirected to 0x4a2a6e0 (_vgnU_ifunc_wrapper)
+--20129-- REDIR: 0x5b02f20 (libc.so.6:stpncpy) redirected to 0x4a2a6e0 (_vgnU_ifunc_wrapper)
+--20129-- REDIR: 0x5b02ef0 (libc.so.6:stpcpy) redirected to 0x4a2a6e0 (_vgnU_ifunc_wrapper)
+--20129-- REDIR: 0x5b047f0 (libc.so.6:strchrnul) redirected to 0x4a2a6e0 (_vgnU_ifunc_wrapper)
+--20129-- REDIR: 0x5b03040 (libc.so.6:strncasecmp_l) redirected to 0x4a2a6e0 (_vgnU_ifunc_wrapper)
+--20129-- REDIR: 0x5b958a0 (libc.so.6:__memcpy_chk) redirected to 0x4a2a6e0 (_vgnU_ifunc_wrapper)
+--20129-- REDIR: 0x5b01cd0 (libc.so.6:strncat) redirected to 0x4a2a6e0 (_vgnU_ifunc_wrapper)
+--20129-- REDIR: 0x5bf23c0 (libc.so.6:__strrchr_avx2) redirected to 0x4c32730 (rindex)
+--20129-- REDIR: 0x5afb070 (libc.so.6:malloc) redirected to 0x4c2faa0 (malloc)
+--20129-- REDIR: 0x5bf2590 (libc.so.6:__strlen_avx2) redirected to 0x4c32cf0 (strlen)
+--20129-- REDIR: 0x5beeba0 (libc.so.6:__memcmp_avx2_movbe) redirected to 0x4c35e00 (bcmp)
+--20129-- REDIR: 0x5bcdd60 (libc.so.6:__strcmp_ssse3) redirected to 0x4c33da0 (strcmp)
+--20129-- REDIR: 0x5bee070 (libc.so.6:__strcspn_sse42) redirected to 0x4c378d0 (strcspn)
+--20129-- REDIR: 0x5afe030 (libc.so.6:calloc) redirected to 0x4c31a70 (calloc)
+--20129-- REDIR: 0x5bf2f50 (libc.so.6:__memset_avx2_unaligned_erms) redirected to 0x4c365d0 (memset)
+--20129-- REDIR: 0x5be1100 (libc.so.6:__strncpy_ssse3) redirected to 0x4c32fb0 (strncpy)
+--20129-- REDIR: 0x5afb950 (libc.so.6:free) redirected to 0x4c30cd0 (free)
+--20129-- REDIR: 0x5b02590 (libc.so.6:__GI_strstr) redirected to 0x4c37760 (__strstr_sse2)
+--20129-- REDIR: 0x5bf2ad0 (libc.so.6:__memcpy_avx_unaligned_erms) redirected to 0x4c366e0 (memmove)
+--20129-- REDIR: 0x5afcc30 (libc.so.6:realloc) redirected to 0x4c31cb0 (realloc)
+--20129-- REDIR: 0x5556240 (libstdc++.so.6:operator new(unsigned long)) redirected to 0x4c30110 (operator new(unsigned long))
+--20129-- REDIR: 0x5bf21d0 (libc.so.6:__strchrnul_avx2) redirected to 0x4c37020 (strchrnul)
+--20129-- REDIR: 0x5bf2ab0 (libc.so.6:__mempcpy_avx_unaligned_erms) redirected to 0x4c37130 (mempcpy)
+--20129-- REDIR: 0x5554380 (libstdc++.so.6:operator delete(void*)) redirected to 0x4c311d0 (operator delete(void*))
+--20129-- REDIR: 0x55562f0 (libstdc++.so.6:operator new[](unsigned long)) redirected to 0x4c30830 (operator new[](unsigned long))
+--20129-- REDIR: 0x5bee420 (libc.so.6:__memchr_avx2) redirected to 0x4c33f80 (memchr)
+--20129-- REDIR: 0x55543b0 (libstdc++.so.6:operator delete[](void*)) redirected to 0x4c316d0 (operator delete[](void*))
+==20129== 
+==20129== HEAP SUMMARY:
+==20129==     in use at exit: 0 bytes in 0 blocks
+==20129==   total heap usage: 10,358 allocs, 10,358 frees, 74,596,436 bytes allocated
+==20129== 
+==20129== All heap blocks were freed -- no leaks are possible
+==20129== 
+==20129== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
+==20129== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)

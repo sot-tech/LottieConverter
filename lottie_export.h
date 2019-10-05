@@ -46,10 +46,15 @@ using namespace rlottie;
 #define SET_BINARY_MODE(file)
 #endif
 
+#define li_MAX_DIMENSION 4000
+
 #define li_OUT_PNG 0
-#define li_OUT_GIF 1
+#define li_OUT_PNGS 1
+#define li_OUT_GIF 2
 #define ls_OUT_PNG "png"
+#define ls_OUT_PNGS "pngs"
 #define ls_OUT_GIF "gif"
+#define ls_OUT_PNGS_SUFFIX "%0*u.png"
 
 #define lz_CHUNK_SIZE 0x4000
 #define lz_WINDOWN_BITS 15
@@ -58,16 +63,23 @@ using namespace rlottie;
 #define lp_COLOR_DEPTH 8
 #define lp_COLOR_BYTES 4
 
+typedef uint8_t byte;
+
 struct byte_buffer {
-	uint8_t * buffer = NULL;
+	byte * buffer = NULL;
 	size_t size = 0;
+};
+
+struct file {
+	FILE * file_pointer = NULL;
+	char * path = NULL;
 };
 
 #define bb_init() {.buffer = NULL, .size = 0}
 
-int bb_append(byte_buffer * bb, uint8_t * data, size_t data_size) {
+int bb_append(byte_buffer * bb, byte * data, size_t data_size) {
 	
-	bb->buffer = (uint8_t *) realloc(bb->buffer, (bb->size + data_size) * sizeof (uint8_t));
+	bb->buffer = (byte *) realloc(bb->buffer, (bb->size + data_size) * sizeof (byte));
 	if (bb->buffer == NULL) {
 		perror("Unable to extend byte buffer\n");
 		return EXIT_FAILURE;
@@ -76,6 +88,9 @@ int bb_append(byte_buffer * bb, uint8_t * data, size_t data_size) {
 	memcpy(bb->buffer + bb->size, data, data_size);
 	bb->size += data_size;
 }
+
+#define file_init(_fp_, _path_) { .file_pointer = (_fp_), .path = (_path_) }
+#define file_close(_file_) { if ((_file_).file_pointer != NULL) fclose((_file_).file_pointer); }
 
 #endif /* LOTTIE_EXPORT_H */
 
