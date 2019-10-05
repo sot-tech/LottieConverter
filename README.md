@@ -12,7 +12,7 @@ Uses:
 *  libpng, zlib
 
 ## Usage
-`lottieconverter input_file|- output_file|- type [resolution] [out_frames] [option]`
+`lottieconverter input_file|- output_file|- type [resolution] [option]`
 
 Parameters:
 
