@@ -39,11 +39,11 @@ OBJECTFILES= \
 
 
 # C Compiler Flags
-CFLAGS=
+CFLAGS=${CCFLAGS_ADD}
 
 # CC Compiler Flags
-CCFLAGS=
-CXXFLAGS=
+CCFLAGS=${CXXFLAGS_ADD}
+CXXFLAGS=${CXXFLAGS_ADD}
 
 # Fortran Compiler Flags
 FFLAGS=
@@ -52,7 +52,7 @@ FFLAGS=
 ASFLAGS=
 
 # Link Libraries and Options
-LDLIBSOPTIONS=-lz -lpng -lrlottie
+LDLIBSOPTIONS=-lz -lpng -lrlottie ${LDLIBSOPTIONS_ADD}
 
 # Build Targets
 .build-conf: ${BUILD_SUBPROJECTS}

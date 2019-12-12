@@ -37,8 +37,12 @@
         <rebuildPropChanged>false</rebuildPropChanged>
       </toolsSet>
       <compileType>
+        <cTool>
+          <commandLine>${CCFLAGS_ADD}</commandLine>
+        </cTool>
         <ccTool>
           <standard>11</standard>
+          <commandLine>${CXXFLAGS_ADD}</commandLine>
         </ccTool>
         <linkerTool>
           <output>${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/lottieconverter</output>
@@ -46,6 +50,7 @@
             <linkerLibStdlibItem>DataCompression</linkerLibStdlibItem>
             <linkerLibLibItem>png</linkerLibLibItem>
             <linkerLibLibItem>rlottie</linkerLibLibItem>
+            <linkerOptionItem>${LDLIBSOPTIONS_ADD}</linkerOptionItem>
           </linkerLibItems>
         </linkerTool>
       </compileType>
@@ -65,10 +70,12 @@
       <compileType>
         <cTool>
           <developmentMode>5</developmentMode>
+          <commandLine>${CCFLAGS_ADD}</commandLine>
         </cTool>
         <ccTool>
           <developmentMode>5</developmentMode>
           <standard>11</standard>
+          <commandLine>${CXXFLAGS_ADD}</commandLine>
         </ccTool>
         <fortranCompilerTool>
           <developmentMode>5</developmentMode>
@@ -81,6 +88,7 @@
             <linkerLibStdlibItem>DataCompression</linkerLibStdlibItem>
             <linkerLibLibItem>png</linkerLibLibItem>
             <linkerLibLibItem>rlottie</linkerLibLibItem>
+            <linkerOptionItem>${LDLIBSOPTIONS_ADD}</linkerOptionItem>
           </linkerLibItems>
         </linkerTool>
       </compileType>
