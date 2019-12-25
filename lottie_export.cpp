@@ -314,11 +314,11 @@ int main(int argc, char **argv) {
 				h = strtoul(argv[argi], NULL, 10);
 				free(res);
 				if(h == 0 || w == 0 || h > li_MAX_DIMENSION || w > li_MAX_DIMENSION){
-					fputs("Invalid resolution", stderr);
+					fputs("Invalid resolution\n", stderr);
 					return EXIT_FAILURE;
 				}
 			} else {
-				fputs("Invalid resolution", stderr);
+				fputs("Invalid resolution\n", stderr);
 				return EXIT_FAILURE;
 			}
 		}
@@ -332,7 +332,7 @@ int main(int argc, char **argv) {
 			} else if (!strcmp(argv[argi], ls_OUT_GIF)) {
 				convert_to = li_OUT_GIF;
 			} else {
-				fputs("Unsupported out format", stderr);
+				fputs("Unsupported out format\n", stderr);
 				return EXIT_FAILURE;
 			}
 		}
@@ -345,6 +345,9 @@ int main(int argc, char **argv) {
 				if (!write_to_file) {
 					fputs("Unable to write image sequence to stdout, provide file prefix\n", stderr);
 					return EXIT_FAILURE;
+				}
+				if(strlen(argv[argi]) > FILENAME_MAX){
+					fputs("File name is too long", stderr);
 				}
 				out_file.path = argv[argi];
 				out_file.file_pointer = NULL;
