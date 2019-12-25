@@ -139,7 +139,7 @@ int convert_and_write_to(byte * in_file_data, uint8_t convert_to, size_t w, size
 				return EXIT_FAILURE;
 			}
 			memset(file_name_template, '\0', file_template_len);
-			strncpy(file_name_template, out_file.path, file_template_len);
+			strncpy(file_name_template, out_file.path, strlen(out_file.path));
 			strncat(file_name_template, ls_OUT_PNGS_SUFFIX, file_template_len);
 			for(float frame_current = 0.0f; frame_current < (float)frame_count; frame_current += ratio){
 				FILE * fp = NULL;

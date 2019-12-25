@@ -87,6 +87,7 @@ int bb_append(byte_buffer * bb, byte * data, size_t data_size) {
 	memset(bb->buffer + bb->size, 0, data_size);
 	memcpy(bb->buffer + bb->size, data, data_size);
 	bb->size += data_size;
+	return EXIT_SUCCESS;
 }
 
 #define file_init(_fp_, _path_) { .file_pointer = (_fp_), .path = (_path_) }
