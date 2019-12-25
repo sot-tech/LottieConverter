@@ -205,7 +205,7 @@ int convert_and_write_to(byte * in_file_data, uint8_t convert_to, size_t w, size
 	return EXIT_SUCCESS;
 }
 
-int gunzip(FILE * in_file, byte_buffer * out_data) {
+int unzip(FILE * in_file, byte_buffer * out_data) {
 	z_stream strm = {0};
 	byte in[lz_CHUNK_SIZE];
 	byte out[lz_CHUNK_SIZE];
@@ -250,7 +250,8 @@ int gunzip(FILE * in_file, byte_buffer * out_data) {
 					inflateEnd(&strm);
 					if (first_read) {
 						do {
-							if (!bb_append(out_data, in, bytes_read)) {
+							if (bb_append(out_data, in, bytes_read) == EXIT_FAILURE) {
+								fputs("Unable to allocate memory\n", stderr);
 								return EXIT_FAILURE;
 							}
 							bytes_read = fread(in, sizeof (byte), sizeof (in), in_file);
@@ -261,15 +262,17 @@ int gunzip(FILE * in_file, byte_buffer * out_data) {
 						} while (bytes_read > 0);
 						return EXIT_SUCCESS;
 					} else {
+						fputs("zlib data error\n", stderr);
 						return EXIT_FAILURE;
 					}
 				default:
 					inflateEnd(& strm);
-					fprintf(stderr, "Gzip error %d.\n", zlib_status);
+					fprintf(stderr, "zlib error %d.\n", zlib_status);
 					return EXIT_FAILURE;
 			}
 			have = lz_CHUNK_SIZE - strm.avail_out;
-			if (!bb_append(out_data, out, have)) {
+			if (bb_append(out_data, out, have) == EXIT_FAILURE) {
+				fputs("Unable to allocate memory\n", stderr);
 				return EXIT_FAILURE;
 			}
 		} while (strm.avail_out == 0);
@@ -388,14 +391,15 @@ int main(int argc, char **argv) {
 		file_close(out_file);
 		return EXIT_FAILURE;
 	}
-
-	int result = gunzip(in_file, &in_file_data);
+	int result = unzip(in_file, &in_file_data);
 	fclose(in_file);
 	if (result == EXIT_SUCCESS) {
 		byte eos[1] = {'\0'};
 		bb_append(&in_file_data, eos, 1);
 		result = convert_and_write_to(in_file_data.buffer, convert_to, w, h, param, out_file);
 	}
+	else
+		fputs("zlib error\n", stderr);
 
 	free(in_file_data.buffer);
 	file_close(out_file);

@@ -81,7 +81,7 @@ int bb_append(byte_buffer * bb, byte * data, size_t data_size) {
 	
 	bb->buffer = (byte *) realloc(bb->buffer, (bb->size + data_size) * sizeof (byte));
 	if (bb->buffer == NULL) {
-		perror("Unable to extend byte buffer\n");
+		perror("Unable to extend byte buffer");
 		return EXIT_FAILURE;
 	}
 	memset(bb->buffer + bb->size, 0, data_size);
