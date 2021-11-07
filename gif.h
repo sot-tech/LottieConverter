@@ -602,7 +602,7 @@ static void GifWriteLzwImage(FILE* f, uint8_t* image, uint32_t left, uint32_t to
 	fputc(0x21, f);
 	fputc(0xf9, f);
 	fputc(0x04, f);
-	fputc(0x05, f); // leave prev frame in place, this frame has transparency
+	fputc(0x0d, f); // leave prev frame in place, this frame has transparency
 	if (delaypos) *delaypos = ftell(f);
 	fputc(delay & 0xff, f);
 	fputc((delay >> 8) & 0xff, f);

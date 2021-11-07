@@ -34,6 +34,8 @@
 #include <zlib.h>
 #include <png.h>
 #include <rlottie.h>
+#include "giflib/gif_lib.h"
+#include "giflib/gif_lib_private.h"
 
 using namespace std;
 using namespace rlottie;
