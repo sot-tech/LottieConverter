@@ -5,11 +5,13 @@ Animation can be converted to png (with transparency) or to gif.
 
 Uses:
 
-*  [rlottie library](https://github.com/Samsung/rlottie "Samsung/rlottie")
+* [rlottie library (MIT License)](https://github.com/Samsung/rlottie "Samsung/rlottie")
 
-*  [gif.h simple library](https://github.com/WohlSoft/LunaLua/blob/master/LunaDll/libs/gif-h/gif.h)
+* [giflib (MIT Licence)](http://giflib.sourceforge.net)
 
-*  libpng, zlib
+* [libpng (libPNG Licence)](http://www.libpng.org/pub/png/libpng.html)
+
+* [zlib (zlib License)](https://zlib.net)
 
 ## Usage
 `lottieconverter input_file|- output_file|- type [resolution] [option]`
@@ -36,3 +38,8 @@ and build it inside rlottie's `"build"` subdir, just execute:
 LDLIBSOPTIONS_ADD="-L/home/user/rlottie/build" CXXFLAGS_ADD="-I/home/user/rlottie/inc" make CONF=Release
 ```
 to avoid `fatal error: rlottie.h No such file or directory` error.
+
+## Licencing notice
+
+Up to v0.1.1 project has been licensed under GNU LGPL 2.1.
+Actual revision is licenced under BSD-3-Clause.
