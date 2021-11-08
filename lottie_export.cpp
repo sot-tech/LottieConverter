@@ -8,19 +8,19 @@
 #include "lottie_export.h"
 
 int write_png(byte *buffer, size_t w, size_t h, FILE *out_file) {
-	png_structp png_ptr = NULL;
-	png_infop info_ptr = NULL;
-	png_byte **row_pointers = NULL;
+	png_structp png_ptr = nullptr;
+	png_infop info_ptr = nullptr;
+	png_byte **row_pointers;
 
 
-	png_ptr = png_create_write_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
-	if (png_ptr == NULL) {
+	png_ptr = png_create_write_struct(PNG_LIBPNG_VER_STRING, nullptr, nullptr, nullptr);
+	if (png_ptr == nullptr) {
 		fputs("PNG export failed: unable to create structure\n", stderr);
 		return EXIT_FAILURE;
 	}
 
 	info_ptr = png_create_info_struct(png_ptr);
-	if (info_ptr == NULL) {
+	if (info_ptr == nullptr) {
 		png_destroy_write_struct(&png_ptr, &info_ptr);
 		fputs("PNG export failed: unable to create info data\n", stderr);
 		return EXIT_FAILURE;
@@ -37,16 +37,16 @@ int write_png(byte *buffer, size_t w, size_t h, FILE *out_file) {
 	             PNG_FILTER_TYPE_DEFAULT);
 
 	row_pointers = (png_byte **) png_malloc(png_ptr, h * sizeof(png_byte *));
-	if (row_pointers == NULL) {
+	if (row_pointers == nullptr) {
 		png_destroy_write_struct(&png_ptr, &info_ptr);
 		perror("PNG export failed\n");
 		return EXIT_FAILURE;
 	}
-	for (int y = 0; y < h; ++y) {
-		png_byte *row = (png_byte *) png_malloc(png_ptr, sizeof(byte) * w * lp_COLOR_BYTES);
-		if (row == NULL) {
+	for (unsigned int y = 0; y < h; ++y) {
+		auto *row = (png_byte *) png_malloc(png_ptr, sizeof(byte) * w * lp_COLOR_BYTES);
+		if (row == nullptr) {
 			perror("PNG export failed\n");
-			for (int yy = 0; yy < y; ++yy) {
+			for (unsigned int yy = 0; yy < y; ++yy) {
 				png_free(png_ptr, row_pointers[yy]);
 			}
 			png_free(png_ptr, row_pointers);
@@ -54,7 +54,7 @@ int write_png(byte *buffer, size_t w, size_t h, FILE *out_file) {
 			return EXIT_FAILURE;
 		}
 		row_pointers[y] = row;
-		for (int x = 0; x < w; x++) {
+		for (unsigned int x = 0; x < w; x++) {
 			byte b, g, r;
 			b = *buffer++;
 			g = *buffer++;
@@ -68,9 +68,9 @@ int write_png(byte *buffer, size_t w, size_t h, FILE *out_file) {
 	png_set_rows(png_ptr, info_ptr, row_pointers);
 	png_init_io(png_ptr, out_file);
 
-	png_write_png(png_ptr, info_ptr, PNG_TRANSFORM_IDENTITY, NULL);
+	png_write_png(png_ptr, info_ptr, PNG_TRANSFORM_IDENTITY, nullptr);
 
-	for (int y = 0; y < h; ++y) {
+	for (unsigned int y = 0; y < h; ++y) {
 		png_free(png_ptr, row_pointers[y]);
 	}
 	png_free(png_ptr, row_pointers);
@@ -78,7 +78,8 @@ int write_png(byte *buffer, size_t w, size_t h, FILE *out_file) {
 	return EXIT_SUCCESS;
 }
 
-int convert_and_write_to(byte *in_file_data, uint8_t convert_to, size_t w, size_t h, uint32_t param, file out_file) {
+int convert_and_write_to(byte *in_file_data, uint8_t convert_to, int w, int h, uint32_t param, file *out_file) {
+	int status = EXIT_SUCCESS;
 	string data(reinterpret_cast<char *> (in_file_data));
 	unique_ptr<Animation> animation = Animation::loadFromData(data, "", "", false);
 	if (!animation) {
@@ -87,7 +88,7 @@ int convert_and_write_to(byte *in_file_data, uint8_t convert_to, size_t w, size_
 	}
 	size_t frame_count = animation->totalFrame();
 	unique_ptr<uint32_t[]> buffer = unique_ptr<uint32_t[]>(new uint32_t[w * h]);
-	if (buffer == nullptr || buffer.get() == nullptr) {
+	if (buffer == nullptr) {
 		fputs("Unable to init frame buffer\n", stderr);
 		return EXIT_FAILURE;
 	}
@@ -97,41 +98,40 @@ int convert_and_write_to(byte *in_file_data, uint8_t convert_to, size_t w, size_
 			if (frame_to_extract > frame_count - 1) frame_to_extract = frame_count - 1;
 			Surface surface(buffer.get(), w, h, w * lp_COLOR_BYTES);
 			animation->renderSync(frame_to_extract, surface);
-			return write_png(reinterpret_cast<byte *> (buffer.get()), w, h, out_file.file_pointer);
+			return write_png(reinterpret_cast<byte *> (buffer.get()), w, h, out_file->file_pointer);
 		}
 		case li_OUT_PNGS: {
 			float ratio = (float) animation->frameRate() / param;
-			size_t frame_count_out = frame_count / ratio, file_template_len =
-				strlen(out_file.path) + strlen(ls_OUT_PNGS_SUFFIX) + 1;
+			size_t frame_count_out = frame_count / ratio;
 			size_t frame_count_out_t = frame_count_out;
 			unsigned int digit_count = 1, frame_number = 0;
 			while (frame_count_out_t > 9) {
 				frame_count_out_t /= 10;
 				++digit_count;
 			}
-			char *file_name_template = (char *) calloc(file_template_len, sizeof(char)),
-				*file_name = (char *) calloc(file_template_len + digit_count, sizeof(char));
+			char *file_name_template = (char *) calloc(FILENAME_MAX, sizeof(char)),
+				*file_name = (char *) calloc(FILENAME_MAX, sizeof(char));
 			int result = EXIT_SUCCESS;
-			if (file_name_template == NULL || file_name == NULL) {
-				if (file_name_template != NULL) free(file_name_template);
-				if (file_name != NULL) free(file_name);
+			if (file_name_template == nullptr || file_name == nullptr) {
+				if (file_name_template != nullptr) free(file_name_template);
+				if (file_name != nullptr) free(file_name);
 				perror("Unable to convert to png sequence, possibly prefix too long\n");
 				return EXIT_FAILURE;
 			}
-			memset(file_name_template, '\0', file_template_len);
-			strncpy(file_name_template, out_file.path, strlen(out_file.path));
-			strncat(file_name_template, ls_OUT_PNGS_SUFFIX, file_template_len);
+			memset(file_name_template, '\0', FILENAME_MAX);
+			strncpy(file_name_template, out_file->path, FILENAME_MAX);
+			strncat(file_name_template, ls_OUT_PNGS_SUFFIX, FILENAME_MAX);
 			for (float frame_current = 0.0f; frame_current < (float) frame_count; frame_current += ratio) {
-				FILE *fp = NULL;
-				memset(file_name, '\0', file_template_len + digit_count);
-				snprintf(file_name, file_template_len + digit_count, file_name_template, digit_count, frame_number++);
-				if ((fp = fopen(file_name, "wb")) == NULL) {
+				FILE *fp = nullptr;
+				memset(file_name, '\0', FILENAME_MAX);
+				snprintf(file_name, FILENAME_MAX, file_name_template, digit_count, frame_number++);
+				if ((fp = fopen(file_name, "wb")) == nullptr) {
 					perror("Unable to write png frame\n");
 					result = EXIT_FAILURE;
 					break;
 				}
 				Surface surface(buffer.get(), w, h, w * lp_COLOR_BYTES);
-				animation->renderSync((size_t) (frame_current + 0.5f), surface);
+				animation->renderSync(lround(frame_current), surface);
 				result = write_png(reinterpret_cast<byte *> (buffer.get()), w, h, fp);
 				fclose(fp);
 				if (result != EXIT_SUCCESS) {
@@ -143,86 +143,139 @@ int convert_and_write_to(byte *in_file_data, uint8_t convert_to, size_t w, size_
 			return result;
 		}
 		case li_OUT_GIF: {
-			byte a_thr = param & 0xff;
 			int error_code = 0;
-			GifFileType *writer = EGifOpen(NULL, NULL, &error_code);
-			if (writer == NULL || error_code != 0) {
+			GifFileType *writer = EGifOpen(nullptr, nullptr, &error_code);
+			if (writer == nullptr || error_code != 0) {
 				fprintf(stderr, "Unable to initialize GIF writer, error code: %d\n", error_code);
 				return EXIT_FAILURE;
 			}
 			int frame_to_extract = (int) (animation->frameRate() / 10);
-			ColorMapObject *outputPalette = GifMakeMapObject(1 << lp_COLOR_DEPTH, NULL);
-			((GifFilePrivateType *) writer->Private)->File = out_file.file_pointer;
+			int color_map_size = 1 << lp_COLOR_DEPTH;
+			ColorMapObject *output_palette = GifMakeMapObject(color_map_size, nullptr);
+			((GifFilePrivateType *) writer->Private)->File = out_file->file_pointer;
 			EGifSetGifVersion(writer, true);
 			if (EGifPutScreenDesc(
 				writer,
 				w, h, lp_COLOR_DEPTH, 0,
-				outputPalette
+				output_palette
 			) == GIF_ERROR) {
 				fputs("Something went wrong while creating gif\n", stderr);
 				return EXIT_FAILURE;
 			}
-			if(EGifPutImageDesc(writer,
-			                 0, 0, w, h, false, NULL) == GIF_ERROR){
-				fputs("Unable to write gif structure\n", stderr);
-				return EXIT_FAILURE;
-			}
 			byte loop[]{1, 0, 0};
 			if (EGifPutExtensionLeader(writer, APPLICATION_EXT_FUNC_CODE) == GIF_ERROR) {
-				fputs("Unable to write gif structure\n", stderr);
+				fputs("Unable to write gif extension\n", stderr);
 				return EXIT_FAILURE;
 			}
 			if (EGifPutExtensionBlock(writer, 11, "NETSCAPE2.0") == GIF_ERROR) {
-				fputs("Unable to write gif structure\n", stderr);
+				fputs("Unable to write gif extension\n", stderr);
 				return EXIT_FAILURE;
 			}
 			if (EGifPutExtensionBlock(writer, 3, loop) == GIF_ERROR) {
-				fputs("Unable to write gif structure\n", stderr);
+				fputs("Unable to write gif extension\n", stderr);
 				return EXIT_FAILURE;
 			}
 			if (EGifPutExtensionTrailer(writer) == GIF_ERROR) {
-				fputs("Unable to write gif structure\n", stderr);
+				fputs("Unable to write gif extension\n", stderr);
 				return EXIT_FAILURE;
 			}
-			for (int frame_current = 0; frame_current < frame_count; frame_current += frame_to_extract) {
+			for (size_t frame_current = 0;
+			     frame_current < frame_count && status == EXIT_SUCCESS; frame_current += frame_to_extract) {
 				Surface surface(buffer.get(), w, h, w * lp_COLOR_BYTES);
 				animation->renderSync(frame_current, surface);
-				byte *byte_buffer_raw = reinterpret_cast<byte *> (buffer.get());
-				byte *byte_buffer_exch = byte_buffer_raw, *byte_buffer_start = byte_buffer_raw;
+				auto *byte_buffer_raw = reinterpret_cast<byte *> (buffer.get());
 				size_t pixel_count = w * h;
-				for (int i = 0; i < pixel_count; ++i) {
+				byte *rb = (byte *)calloc(pixel_count, sizeof(byte)),
+					*gb = (byte *)calloc(pixel_count, sizeof(byte)),
+					*bb = (byte *)calloc(pixel_count, sizeof(byte)),
+					*out = (byte *)calloc(pixel_count, sizeof(byte));
+				if (rb == nullptr || gb == nullptr || bb == nullptr || out == nullptr) {
+					perror("Unable to init byte buffer");
+					if(rb != nullptr) free(rb);
+					if(gb != nullptr) free(gb);
+					if(bb != nullptr) free(bb);
+					if(out != nullptr) free(out);
+					status = EXIT_FAILURE;
+					break;
+				}
+				for (size_t i = 0; i < pixel_count; ++i) {
 					byte b, g, r, a;
 					b = *byte_buffer_raw++;
 					g = *byte_buffer_raw++;
 					r = *byte_buffer_raw++;
 					a = *byte_buffer_raw++;
-					if (a <= a_thr) {
-						b = 0;
-						g = 0;
-						r = 0;
-						a = kGifTransIndex;
+					if (a) {
+						if (a != 0xFF) {
+							r += (byte) (((float) r) * (float) (0xFF - a) / 255.0f);
+							g += (byte) (((float) g) * (float) (0xFF - a) / 255.0f);
+							b += (byte) (((float) b) * (float) (0xFF - a) / 255.0f);
+						}
+					} else {
+						r = g = b = 0; //background
 					}
-					*byte_buffer_exch++ = r;
-					*byte_buffer_exch++ = g;
-					*byte_buffer_exch++ = b;
-					*byte_buffer_exch++ = a;
+					rb[i] = r;
+					gb[i] = g;
+					bb[i] = b;
 				}
-				//EGifPutLine(GifFile, &(frames[ni][j]), gifsx)
-				if (!GifWriteFrame(&writer, byte_buffer_start, w, h, 1, lp_COLOR_DEPTH)) {
-					fputs("Something went wrong while appending gif frame\n", stderr);
+				error_code = GifQuantizeBuffer(w, h, &output_palette->ColorCount,
+				                               rb, gb, bb,
+				                               out, output_palette->Colors);
+				free(rb);
+				free(gb);
+				free(bb);
+				if(error_code != GIF_OK){
+					free(out);
+					fputs("Unable quantize gif colors\n", stderr);
+					status = EXIT_FAILURE;
 					break;
 				}
+				byte *line_buffer = out;
+				static unsigned char delay[4] = {0x0D,  // Bit 0 - flag if transparent index given (checked),
+												            // Bit 1 - User Input Flag (unchecked),
+															// Bits 2-4 - Disposal Method:
+															//      0 - unspecified,
+															//      1 - don't dispose,
+															//      2 - restore to background color,
+															//      3 - restore to previous (checked)
+												 10,    // >Hundredths of
+												 0,     // seconds to wait<
+												 0};    // Transparent color index //TODO: try to calculate
+				if(EGifPutExtension(writer, GRAPHICS_EXT_FUNC_CODE, 4, delay) == GIF_OK) {
+					if (EGifPutImageDesc(writer, 0, 0, w, h, false, output_palette) == GIF_OK) {
+						for (int line = 0; line < h; ++line) {
+							if (EGifPutLine(writer, line_buffer, w) != GIF_OK) {
+								fputs("Unable to write GIF line\n", stderr);
+								status = EXIT_FAILURE;
+								break;
+							}
+							line_buffer += w;
+						}
+					} else{
+						fputs("Unable to write gif image info\n", stderr);
+						status = EXIT_FAILURE;
+					}
+				} else {
+					fputs("Unable to write gif extension\n", stderr);
+					status = EXIT_FAILURE;
+				}
+			    free(out);
 			}
-			//EGifCloseFile(GifFile)
-			GifEnd(&writer);
+			if (EGifCloseFile(writer, &error_code) != GIF_OK) {
+				fprintf(stderr, "Unable to finalize GIF writer, error code: %d\n", error_code);
+				status = EXIT_FAILURE;
+			}
+			//already closed by EGifCloseFile
+			out_file->file_pointer = nullptr;
 			break;
 		}
+		default:
+			break;
 	}
-	return EXIT_SUCCESS;
+	return status;
 }
 
 int unzip(FILE *in_file, byte_buffer *out_data) {
-	z_stream strm = {0};
+	z_stream strm = {nullptr};
 	byte in[lz_CHUNK_SIZE];
 	byte out[lz_CHUNK_SIZE];
 	bool first_read = true;
@@ -305,31 +358,31 @@ int main(int argc, char **argv) {
 
 	uint32_t param = 1;
 	uint8_t convert_to = li_OUT_PNG;
-	size_t w = 128, h = 128;
+	unsigned long w = 128, h = 128;
 	FILE *in_file = stdin;
-	file out_file = file_init(stdout, NULL);
+	file out_file = file(stdout, nullptr);
 	int argi = argc;
 	switch (argc) {
 		case 6:
 			--argi;
-			param = strtoul(argv[argi], NULL, 0);
+			param = strtoul(argv[argi], nullptr, 0);
 		case 5: {
 			--argi;
 			size_t len = strlen(argv[argi]);
 			size_t index_of_x = strcspn(argv[argi], "x");
 			if (len > 3 && index_of_x > 0 && index_of_x < len - 1) {
 				char *res = (char *) calloc(len, sizeof(char));
-				if (res == NULL) {
+				if (res == nullptr) {
 					perror("Resolution error");
 					return EXIT_FAILURE;
 				}
 				memset(res, '\0', len);
 				strncpy(res, argv[argi], index_of_x);
-				w = strtoul(argv[argi], NULL, 10);
+				w = strtoul(argv[argi], nullptr, 10);
 				++index_of_x;
 				memset(res, '\0', len);
 				strncpy(res, argv[argi] + index_of_x, len - index_of_x);
-				h = strtoul(argv[argi], NULL, 10);
+				h = strtoul(argv[argi], nullptr, 10);
 				free(res);
 				if (h == 0 || w == 0 || h > li_MAX_DIMENSION || w > li_MAX_DIMENSION) {
 					fputs("Invalid resolution\n", stderr);
@@ -366,12 +419,12 @@ int main(int argc, char **argv) {
 					fputs("File name is too long", stderr);
 				}
 				out_file.path = argv[argi];
-				out_file.file_pointer = NULL;
+				out_file.file_pointer = nullptr;
 			} else {
 				if (write_to_file) {
 					out_file.file_pointer = fopen(argv[argi], "wb");
 				}
-				if (out_file.file_pointer == NULL) {
+				if (out_file.file_pointer == nullptr) {
 					perror(argv[argi]);
 					return EXIT_FAILURE;
 				}
@@ -385,7 +438,7 @@ int main(int argc, char **argv) {
 			}
 			if (!in_file) {
 				perror(argv[argi]);
-				file_close(out_file);
+				out_file.close();
 				return EXIT_FAILURE;
 			}
 			break;
@@ -395,12 +448,12 @@ int main(int argc, char **argv) {
 			return EXIT_FAILURE;
 	}
 
-	byte_buffer in_file_data = bb_init();
+	byte_buffer in_file_data = byte_buffer();
 	in_file_data.buffer = (byte *) calloc(0, sizeof(byte));
-	if (in_file_data.buffer == NULL) {
+	if (in_file_data.buffer == nullptr) {
 		perror("Unable to init byte buffer");
 		fclose(in_file);
-		file_close(out_file);
+		out_file.close();
 		return EXIT_FAILURE;
 	}
 	int result = unzip(in_file, &in_file_data);
@@ -408,13 +461,12 @@ int main(int argc, char **argv) {
 	if (result == EXIT_SUCCESS) {
 		byte eos[1] = {'\0'};
 		bb_append(&in_file_data, eos, 1);
-		result = convert_and_write_to(in_file_data.buffer, convert_to, w, h, param, out_file);
+		result = convert_and_write_to(in_file_data.buffer, convert_to, (int)w, (int)h, param, &out_file);
 	} else
 		fputs("zlib error\n", stderr);
 
 	free(in_file_data.buffer);
-	file_close(out_file);
+	out_file.close();
 
 	return result;
 }
-

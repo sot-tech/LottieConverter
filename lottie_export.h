@@ -8,15 +8,22 @@
 #ifndef LOTTIE_EXPORT_H
 #define LOTTIE_EXPORT_H
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <stdbool.h>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
+#include <cmath>
 #include <zlib.h>
 #include <png.h>
 #include <rlottie.h>
 #include "gif_lib.h"
 #include "gif_lib_private.h"
+
+//include from getarg.h
+extern "C" int GifQuantizeBuffer(unsigned int Width, unsigned int Height,
+                                 int *ColorMapSize, GifByteType * RedInput,
+                                 GifByteType * GreenInput, GifByteType * BlueInput,
+                                 GifByteType * OutputBuffer,
+                                 GifColorType * OutputColorMap);
 
 using namespace std;
 using namespace rlottie;
@@ -49,21 +56,28 @@ using namespace rlottie;
 typedef uint8_t byte;
 
 struct byte_buffer {
-	byte * buffer = NULL;
+	byte_buffer()=default;
+	byte * buffer = nullptr;
 	size_t size = 0;
 };
 
 struct file {
-	FILE * file_pointer = NULL;
-	char * path = NULL;
-};
+	FILE * file_pointer = nullptr;
+	char * path = nullptr;
 
-#define bb_init() {.buffer = NULL, .size = 0}
+	file(FILE * fd, char * p){
+		file_pointer = fd;
+		path = p;
+	}
+	void close() const{
+		if (file_pointer != nullptr) fclose(file_pointer);
+	}
+};
 
 int bb_append(byte_buffer * bb, byte * data, size_t data_size) {
 	
 	bb->buffer = (byte *) realloc(bb->buffer, (bb->size + data_size) * sizeof (byte));
-	if (bb->buffer == NULL) {
+	if (bb->buffer == nullptr) {
 		perror("Unable to extend byte buffer");
 		return EXIT_FAILURE;
 	}
@@ -72,9 +86,6 @@ int bb_append(byte_buffer * bb, byte * data, size_t data_size) {
 	bb->size += data_size;
 	return EXIT_SUCCESS;
 }
-
-#define file_init(_fp_, _path_) { .file_pointer = (_fp_), .path = (_path_) }
-#define file_close(_file_) { if ((_file_).file_pointer != NULL) fclose((_file_).file_pointer); }
 
 #endif /* LOTTIE_EXPORT_H */
 

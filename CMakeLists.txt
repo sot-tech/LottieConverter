@@ -7,9 +7,16 @@ set(ZLIB_MINIMUM 1.2.3)
 set(PNG_MINIMUM 1.6.0)
 set(RL_MINIMUM 0.2)
 
+set(COMPILE_PARAMS -Wall)
 set(SOURCE_FILES lottie_export.cpp)
-set(LIBS png zlib)
+set(LIBS png z)
 add_executable(${PROJECT_NAME} ${SOURCE_FILES})
+
+if (CMAKE_BUILD_TYPE EQUAL "RELEASE")
+    set(COMPILE_PARAMS ${COMPILE_PARAMS} -O2)
+else(CMAKE_BUILD_TYPE)
+    set(COMPILE_PARAMS ${COMPILE_PARAMS} -O0 -g3)
+endif()
 
 option(SYSTEM_RL "Use system dynamic rlottie library instead of building static one" 0)
 
@@ -23,7 +30,7 @@ if (SYSTEM_RL)
 else (SYSTEM_RL)
     include(ExternalProject)
     ExternalProject_Add(
-            rlottieProject
+            rlottie
             URL "${CMAKE_SOURCE_DIR}/lib/rlottie"
             ${ARGN}
             PREFIX "${CMAKE_BINARY_DIR}/lib/rlottie"
@@ -38,13 +45,11 @@ else (SYSTEM_RL)
             "-DLOTTIE_MODULE=OFF"
             "-DBUILD_SHARED_LIBS=OFF"
             "-DLIB_INSTALL_DIR=${CMAKE_BINARY_DIR}/lib/rlottie"
-            BUILD_BYPRODUCTS "${CMAKE_BINARY_DIR}/lib/librlottie.a"
+            BUILD_BYPRODUCTS "${CMAKE_BINARY_DIR}/librlottie.a"
     )
-    ExternalProject_Get_Property(rlottieProject INSTALL_DIR)
+    ExternalProject_Get_Property(rlottie INSTALL_DIR)
     set(RL_INCLUDEDIR "${INSTALL_DIR}/include")
-    add_library(rlottie STATIC IMPORTED)
-    add_dependencies(rlottie rlottieProject)
-#    set(LIBS ${LIBS} "${INSTALL_DIR}/librlottie.a")
+    set(LIBS ${LIBS} pthread "${INSTALL_DIR}/librlottie.a")
     add_dependencies(${PROJECT_NAME} rlottie)
 endif (SYSTEM_RL)
 
@@ -57,21 +62,21 @@ add_custom_target(
         BYPRODUCTS "${CMAKE_BINARY_DIR}/lib/giflib/libgif.a" "${CMAKE_BINARY_DIR}/lib/giflib/libutil.a"
 )
 
+add_library(giflibUtil STATIC IMPORTED)
+add_dependencies(giflibUtil giflibProject)
+set_target_properties(giflibUtil
+        PROPERTIES IMPORTED_LOCATION "${CMAKE_BINARY_DIR}/lib/giflib/libutil.a"
+        )
+
 add_library(giflibMain STATIC IMPORTED)
 add_dependencies(giflibMain giflibProject)
 set_target_properties(giflibMain
         PROPERTIES IMPORTED_LOCATION "${CMAKE_BINARY_DIR}/lib/giflib/libgif.a"
 )
 
-add_library(giflibUtil STATIC IMPORTED)
-add_dependencies(giflibUtil giflibProject)
-set_target_properties(giflibUtil
-        PROPERTIES IMPORTED_LOCATION "${CMAKE_BINARY_DIR}/lib/giflib/libutil.a"
-)
-
 add_library(giflib INTERFACE IMPORTED)
 set_property(TARGET giflib PROPERTY
-        INTERFACE_LINK_LIBRARIES giflibMain giflibUtil)
+        INTERFACE_LINK_LIBRARIES giflibUtil giflibMain)
 #add_dependencies(giflib giflibMain giflibUtil)
 
 set(LIBS ${LIBS} giflib)
@@ -79,5 +84,5 @@ add_dependencies(${PROJECT_NAME} giflib)
 
 include_directories("${CMAKE_BINARY_DIR}/lib/giflib" "${RL_INCLUDEDIR}")
 
-target_compile_options(${PROJECT_NAME} PUBLIC PRIVATE -std=c++${CMAKE_CXX_STANDARD} -Wall -O2)
+target_compile_options(${PROJECT_NAME} PUBLIC PRIVATE -std=c++${CMAKE_CXX_STANDARD} ${COMPILE_PARAMS})
 target_link_libraries(${PROJECT_NAME} PUBLIC ${LIBS})
