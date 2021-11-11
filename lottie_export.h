@@ -15,8 +15,7 @@
 #include <zlib.h>
 #include <png.h>
 #include <rlottie.h>
-#include "gif_lib.h"
-#include "gif_lib_private.h"
+#include <gif_lib.h>
 
 //include from getarg.h
 extern "C" int GifQuantizeBuffer(unsigned int Width, unsigned int Height,
@@ -78,7 +77,6 @@ int bb_append(byte_buffer * bb, byte * data, size_t data_size) {
 	
 	bb->buffer = (byte *) realloc(bb->buffer, (bb->size + data_size) * sizeof (byte));
 	if (bb->buffer == nullptr) {
-		perror("Unable to extend byte buffer");
 		return EXIT_FAILURE;
 	}
 	memset(bb->buffer + bb->size, 0, data_size);

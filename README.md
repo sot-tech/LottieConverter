@@ -9,7 +9,7 @@ Uses:
 
 * [giflib (MIT Licence)](http://giflib.sourceforge.net)
 
-* [libpng (libPNG Licence)](http://www.libpng.org/pub/png/libpng.html)
+* [libpng (zlib/libpng Licence)](http://www.libpng.org/pub/png/libpng.html)
 
 * [zlib (zlib License)](https://zlib.net)
 
@@ -22,22 +22,29 @@ Parameters:
 * output_file - file to be written, if set `-` stdout is used, **note, that for `pngs` type, file name prefix is required**
 * type - output format, currently supported: `png`, `gif`, `pngs`
 * resolution - size in pixels of out image, shoul be in `SIZExSIZE` format, default `128x128`
-* option - depends of type, default 0 for all:
+* option - depends of type, default 1 for all:
     * `png` - which frame in percents to extract, i.e. if set to `20`, and there's 200 frames in animation, 40th frame will be extracted
     * `pngs` - frame rate to try to extract images, i.e. if animation framerate is 30, and `option` set to 10 every 3rd frame will be extracted,
     if animation frame rate is 10, and `option` set to 30 every frame will be written 3 times
-    * `gif` - background color (RGB) to be set unstead fully transparent pixels, format must be same as C constant representation (`12345`, `0x123abc`, `01267` etc.)
+    * `gif` - unused
     
 ## Build
-Just execute `make CONF=Release` for release build (with -O2 optimization), or `make CONF=Debug` for debug.
-You can also set additional variables for c++ compiler (`CXXFLAGS_ADD`) and linker (`LDLIBSOPTIONS_ADD`), i.e.:
-If rlottie headers and library not installed to system default search directories,
-but you have downloaded it's [source](https://github.com/Samsung/rlottie) to `/home/user/rlottie` 
-and build it inside rlottie's `"build"` subdir, just execute:
-```bash
-LDLIBSOPTIONS_ADD="-L/home/user/rlottie/build" CXXFLAGS_ADD="-I/home/user/rlottie/inc" make CONF=Release
-```
-to avoid `fatal error: rlottie.h No such file or directory` error.
+1. Clone this repo or download sources from releases page
+2. If cloned AND you need included `libpng`, `rlottie` or `giflib` fetch submodules
+by executing `git submodule update --init`
+3. Execute CMake build:
+   1. `mkdir build && cd build`
+   2. `cmake -DCMAKE_BUILD_TYPE=Release .. && cmake --build .`
+4. Copy or execute ready `lottieconverter` in `build` subdirectory.
+
+## Additional build options
+By default, project uses system's shared `libpng` library and header, 
+static `rlottie` and `libgif`. 
+You can change behaviour by providing cmake options 
+`SYSTEM_PNG`, `SYSTEM_RL` and `SYSTEM_GL` to 0 or 1 respectively
+(`-DSYSTEM_PNG=0 -DSYSTEM_RL=1 -DSYSTEM_GL=0` or any).
+
+_NB: `libz` must be pre-installed in your system._
 
 ## Licencing notice
 
