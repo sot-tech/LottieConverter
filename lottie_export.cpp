@@ -156,11 +156,11 @@ int convert_and_write_to(byte *in_file_data, uint8_t convert_to, int w, int h, u
 				fputs("GIF framerate must be between 1 and 100\n", stderr);
 				return EXIT_FAILURE;
 			}
-			float frame_current = 0.0f, frame_inc = (float)animation->frameRate() / (float)param;;
+			float frame_current = 0.0f, frame_inc = (float)animation->frameRate() / (float)param;
 			int error_code = 0;
 			GifFileType *writer = EGifOpenFileHandle(fileno(out_file->file_pointer), &error_code);
 			if (writer == nullptr || error_code != 0) {
-				fprintf(stderr, "Unable to initialize GIF writer, error code: %d\n", error_code);
+				fprintf(stderr, "Unable to initialize GIF writer: %s\n", GifErrorString(error_code));
 				return EXIT_FAILURE;
 			}
 			int color_map_size = 1 << lp_COLOR_DEPTH;
@@ -182,6 +182,7 @@ int convert_and_write_to(byte *in_file_data, uint8_t convert_to, int w, int h, u
 				                             0};    // Transparent color index //TODO: try to calculate
 			ColorMapObject *output_palette = GifMakeMapObject(color_map_size, nullptr);
 			if(output_palette == nullptr) {
+				fputs("Unable to generate gif color palette\n", stderr);
 				status = EXIT_FAILURE;
 				goto CLOSE_FILE;
 			}
@@ -191,27 +192,27 @@ int convert_and_write_to(byte *in_file_data, uint8_t convert_to, int w, int h, u
 				w, h, lp_COLOR_DEPTH, 0,
 				output_palette
 			) == GIF_ERROR) {
-				fputs("Something went wrong while creating gif\n", stderr);
+				fprintf(stderr,"Unable to write gif screen description: %s\n", GifErrorString(writer->Error));
 				status = EXIT_FAILURE;
 				goto FREE_MAP;
 			}
 			if (EGifPutExtensionLeader(writer, APPLICATION_EXT_FUNC_CODE) == GIF_ERROR) {
-				fputs("Unable to write gif extension\n", stderr);
+				fprintf(stderr,"Unable to write gif extension: %s\n", GifErrorString(writer->Error));
 				status = EXIT_FAILURE;
 				goto FREE_MAP;
 			}
 			if (EGifPutExtensionBlock(writer, 11, "NETSCAPE2.0") == GIF_ERROR) {
-				fputs("Unable to write gif extension\n", stderr);
+				fprintf(stderr,"Unable to write gif extension: %s\n", GifErrorString(writer->Error));
 				status = EXIT_FAILURE;
 				goto FREE_MAP;
 			}
 			if (EGifPutExtensionBlock(writer, 3, loop) == GIF_ERROR) {
-				fputs("Unable to write gif extension\n", stderr);
+				fprintf(stderr,"Unable to write gif extension: %s\n", GifErrorString(writer->Error));
 				status = EXIT_FAILURE;
 				goto FREE_MAP;
 			}
 			if (EGifPutExtensionTrailer(writer) == GIF_ERROR) {
-				fputs("Unable to write gif extension\n", stderr);
+				fprintf(stderr,"Unable to write gif extension: %s\n", GifErrorString(writer->Error));
 				status = EXIT_FAILURE;
 			}
 			while (frame_current < (float)frame_count && status == EXIT_SUCCESS) {
@@ -224,7 +225,7 @@ int convert_and_write_to(byte *in_file_data, uint8_t convert_to, int w, int h, u
 					*bb = (byte *)calloc(pixel_count, sizeof(byte)),
 					*out = (byte *)calloc(pixel_count, sizeof(byte));
 				if (rb == nullptr || gb == nullptr || bb == nullptr || out == nullptr) {
-					perror("Unable to init byte buffer");
+					perror("Unable to init color byte buffer");
 					if(rb != nullptr) free(rb);
 					if(gb != nullptr) free(gb);
 					if(bb != nullptr) free(bb);
@@ -268,18 +269,18 @@ int convert_and_write_to(byte *in_file_data, uint8_t convert_to, int w, int h, u
 					if (EGifPutImageDesc(writer, 0, 0, w, h, false, output_palette) == GIF_OK) {
 						for (int line = 0; line < h; ++line) {
 							if (EGifPutLine(writer, line_buffer, w) != GIF_OK) {
-								fputs("Unable to write GIF line\n", stderr);
+								fprintf(stderr, "Unable to write GIF line: %s\n", GifErrorString(writer->Error));
 								status = EXIT_FAILURE;
 								break;
 							}
 							line_buffer += w;
 						}
 					} else{
-						fputs("Unable to write gif image info\n", stderr);
+						fprintf(stderr, "Unable to write gif image info: %s\n", GifErrorString(writer->Error));
 						status = EXIT_FAILURE;
 					}
 				} else {
-					fputs("Unable to write gif extension\n", stderr);
+					fprintf(stderr, "Unable to write gif extension: %s\n", GifErrorString(writer->Error));
 					status = EXIT_FAILURE;
 				}
 			    free(out);
@@ -289,7 +290,7 @@ FREE_MAP:
 			GifFreeMapObject(output_palette);
 CLOSE_FILE:
 			if (EGifCloseFile(writer, &error_code) != GIF_OK) {
-				fprintf(stderr, "Unable to finalize GIF writer, error code: %d\n", error_code);
+				fprintf(stderr, "Unable to finalize GIF writer: %s\n", GifErrorString(error_code));
 				status = EXIT_FAILURE;
 			}
 			//already closed by EGifCloseFile
