@@ -4,7 +4,9 @@ include(ExternalProject)
 include(FindPackageMessage)
 
 set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_C_STANDARD 99)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
+set(CMAKE_C_STANDARD_REQUIRED True)
 set(ZLIB_MINIMUM 1.2.3)
 set(PNG_MINIMUM 1.6.0)
 
@@ -12,7 +14,7 @@ set(COMPILE_PARAMS -Wall)
 set(SOURCE_FILES lottie_export.cpp)
 set(LIBS z)
 set(INCLUDES)
-add_executable(${PROJECT_NAME} ${SOURCE_FILES})
+add_executable(${PROJECT_NAME})
 
 if (CMAKE_BUILD_TYPE EQUAL "RELEASE")
     set(COMPILE_PARAMS ${COMPILE_PARAMS} -O2)
@@ -23,6 +25,9 @@ endif()
 option(SYSTEM_PNG "Use system dynamic libpng" 1)
 option(SYSTEM_RL "Use system dynamic rlottie" 0)
 option(SYSTEM_GL "Use system shared giflib" 0)
+
+enable_testing()
+
 
 find_package(ZLIB ${ZLIB_MINIMUM} REQUIRED)
 
@@ -57,8 +62,9 @@ endif()
 if (SYSTEM_RL)
     find_path(RL_INCLUDEDIR NAMES rlottie.h HINTS ${_RL_INCLUDEDIR} REQUIRED)
     find_library(RL_LIBDIR NAMES rlottie HINTS ${_RL_LIBDIR} REQUIRED)
-    find_package_message(rlottie "Found RLOTTIE: ${RL_LIBDIR}" "_")
+    find_package_message(rlottie "Found RLOTTIE: ${RL_LIBDIR}" "Include path: ${RL_INCLUDEDIR}")
     set(LIBS ${LIBS} "${RL_LIBDIR}")
+    set(INCLUDES ${INCLUDES} "${RL_INCLUDEDIR}")
 else ()
     message(NOTICE "-- Building static rlottie")
     ExternalProject_Add(
@@ -87,8 +93,10 @@ endif ()
 if(SYSTEM_GL)
     find_path(GL_INCLUDEDIR NAMES gif_lib.h HINTS ${_GL_INCLUDEDIR} REQUIRED)
     find_library(GL_LIBDIR NAMES gif HINTS ${_GL_LIBDIR} REQUIRED)
-    find_package_message(gif "Found GIF: ${GL_LIBDIR}" "_")
+    find_package_message(gif "Found GIF: ${GL_LIBDIR}" "Include path: ${GL_INCLUDEDIR}")
+    set(INCLUDES ${INCLUDES} "${GL_INCLUDEDIR}")
     set(LIBS ${LIBS} "${GL_LIBDIR}")
+    set(SOURCE_FILES ${SOURCE_FILES} gif_quantize.c)
 else()
     message(NOTICE "-- Building static giflib")
     file(COPY ${CMAKE_SOURCE_DIR}/lib/giflib DESTINATION ${CMAKE_BINARY_DIR}/lib)
@@ -119,12 +127,17 @@ else()
 
     set(LIBS ${LIBS} giflib)
     add_dependencies(${PROJECT_NAME} giflib)
-    set(INCLUDES "${INCLUDES}" "${CMAKE_BINARY_DIR}/lib/giflib")
+    set(INCLUDES ${INCLUDES} "${CMAKE_BINARY_DIR}/lib/giflib")
 endif()
 
 if(INCLUDES)
     include_directories(${INCLUDES})
 endif()
-
-target_compile_options(${PROJECT_NAME} PUBLIC PRIVATE -std=c++${CMAKE_CXX_STANDARD} ${COMPILE_PARAMS})
+target_sources(${PROJECT_NAME} PRIVATE ${SOURCE_FILES})
+target_compile_options(${PROJECT_NAME} PUBLIC PRIVATE ${COMPILE_PARAMS})
 target_link_libraries(${PROJECT_NAME} PUBLIC ${LIBS})
+
+add_test(NAME convert
+        COMMAND run.sh $<TARGET_FILE:lottieconverter>
+        WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}/test"
+        )

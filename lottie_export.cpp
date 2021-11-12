@@ -94,7 +94,7 @@ int convert_and_write_to(byte *in_file_data, uint8_t convert_to, int w, int h, u
 	}
 	switch (convert_to) {
 		case li_OUT_PNG: {
-			if(param > 100){
+			if (param > 100) {
 				fputs("Frame percent must be between 0 and 100\n", stderr);
 				return EXIT_FAILURE;
 			}
@@ -105,12 +105,12 @@ int convert_and_write_to(byte *in_file_data, uint8_t convert_to, int w, int h, u
 			return write_png(reinterpret_cast<byte *> (buffer.get()), w, h, out_file->file_pointer);
 		}
 		case li_OUT_PNGS: {
-			if(param == 0){
+			if (param == 0) {
 				fputs("Framerate must not be 0\n", stderr);
 				return EXIT_FAILURE;
 			}
-			float frame_current = 0.0f, frame_inc = (float)animation->frameRate() / (float)param;
-			auto frame_count_out = (size_t)((float)frame_count / frame_inc);
+			float frame_current = 0.0f, frame_inc = (float) animation->frameRate() / (float) param;
+			auto frame_count_out = (size_t) ((float) frame_count / frame_inc);
 			size_t frame_count_out_t = frame_count_out;
 			unsigned int digit_count = 1, frame_number = 0;
 			while (frame_count_out_t > 9) {
@@ -152,86 +152,91 @@ int convert_and_write_to(byte *in_file_data, uint8_t convert_to, int w, int h, u
 			return result;
 		}
 		case li_OUT_GIF: {
-			if(param == 0 || param > 100){
+			if (param == 0 || param > 100) {
 				fputs("GIF framerate must be between 1 and 100\n", stderr);
 				return EXIT_FAILURE;
 			}
-			float frame_current = 0.0f, frame_inc = (float)animation->frameRate() / (float)param;
+			float frame_current = 0.0f, frame_inc = (float) animation->frameRate() / (float) param;
 			int error_code = 0;
 			GifFileType *writer = EGifOpenFileHandle(fileno(out_file->file_pointer), &error_code);
 			if (writer == nullptr || error_code != 0) {
 				fprintf(stderr, "Unable to initialize GIF writer: %s\n", GifErrorString(error_code));
 				return EXIT_FAILURE;
 			}
-			int color_map_size = 1 << lp_COLOR_DEPTH;
-			byte hs_delay = (byte)lround(100.0f/(float)param);
-			if(hs_delay == 1){ //if delay set to 1 (1/100 sec) animation became very slo-o-ow
+			byte hs_delay = (byte) lround(100.0f / (float) param);
+			if (hs_delay == 1) { //if delay set to 1 (1/100 sec) animation became very slo-o-ow
 				hs_delay = 2;
 				frame_inc *= 2.0f;
 			}
-            byte loop[]{1, 0, 0}, //infinite gif loop
-			        delay[4] = {    0x0D,   // Bit 0 - flag if transparent index given (checked),
-												// Bit 1 - User Input Flag (unchecked),
-												// Bits 2-4 - Disposal Method:
-												//      0 - unspecified,
-												//      1 - don't dispose,
-												//      2 - restore to background color,
-												//      3 - restore to previous (checked)
-                                            hs_delay,    // >Hundredths of
-		                                     0,          // seconds to wait<
-				                             0};    // Transparent color index //TODO: try to calculate
-			ColorMapObject *output_palette = GifMakeMapObject(color_map_size, nullptr);
-			if(output_palette == nullptr) {
-				fputs("Unable to generate gif color palette\n", stderr);
-				status = EXIT_FAILURE;
-				goto CLOSE_FILE;
-			}
+			byte loop[]{1, 0, 0}, //infinite gif loop
+			delay[4] = {0x0D,   // Bit 0 - flag if transparent index given (checked),
+				// Bit 1 - User Input Flag (unchecked),
+				// Bits 2-4 - Disposal Method:
+				//      0 - unspecified,
+				//      1 - don't dispose,
+				//      2 - restore to background color,
+				//      3 - restore to previous (checked)
+				        hs_delay,    // >Hundredths of
+				        0,          // seconds to wait<
+				        lp_COLOR_BG    // Transparent color index //TODO: try to calculate
+			};
+			int color_count = 1 << lp_COLOR_DEPTH;
 			EGifSetGifVersion(writer, true);
 			if (EGifPutScreenDesc(
 				writer,
-				w, h, lp_COLOR_DEPTH, 0,
-				output_palette
+				w, h, lp_COLOR_DEPTH, lp_COLOR_BG,
+				nullptr
 			) == GIF_ERROR) {
-				fprintf(stderr,"Unable to write gif screen description: %s\n", GifErrorString(writer->Error));
+				fprintf(stderr, "Unable to write gif screen description: %s\n", GifErrorString(writer->Error));
 				status = EXIT_FAILURE;
-				goto FREE_MAP;
+				goto CLOSE_FILE;
 			}
 			if (EGifPutExtensionLeader(writer, APPLICATION_EXT_FUNC_CODE) == GIF_ERROR) {
-				fprintf(stderr,"Unable to write gif extension: %s\n", GifErrorString(writer->Error));
+				fprintf(stderr, "Unable to write gif extension: %s\n", GifErrorString(writer->Error));
 				status = EXIT_FAILURE;
-				goto FREE_MAP;
+				goto CLOSE_FILE;
 			}
 			if (EGifPutExtensionBlock(writer, 11, "NETSCAPE2.0") == GIF_ERROR) {
-				fprintf(stderr,"Unable to write gif extension: %s\n", GifErrorString(writer->Error));
+				fprintf(stderr, "Unable to write gif extension: %s\n", GifErrorString(writer->Error));
 				status = EXIT_FAILURE;
-				goto FREE_MAP;
+				goto CLOSE_FILE;
 			}
 			if (EGifPutExtensionBlock(writer, 3, loop) == GIF_ERROR) {
-				fprintf(stderr,"Unable to write gif extension: %s\n", GifErrorString(writer->Error));
+				fprintf(stderr, "Unable to write gif extension: %s\n", GifErrorString(writer->Error));
 				status = EXIT_FAILURE;
-				goto FREE_MAP;
+				goto CLOSE_FILE;
 			}
 			if (EGifPutExtensionTrailer(writer) == GIF_ERROR) {
-				fprintf(stderr,"Unable to write gif extension: %s\n", GifErrorString(writer->Error));
+				fprintf(stderr, "Unable to write gif extension: %s\n", GifErrorString(writer->Error));
 				status = EXIT_FAILURE;
 			}
-			while (frame_current < (float)frame_count && status == EXIT_SUCCESS) {
+			while (frame_current < (float) frame_count && status == EXIT_SUCCESS) {
 				Surface surface(buffer.get(), w, h, w * lp_COLOR_BYTES);
 				animation->renderSync(lround(frame_current), surface);
 				auto *byte_buffer_raw = reinterpret_cast<byte *> (buffer.get());
 				size_t pixel_count = w * h;
-				byte *rb = (byte *)calloc(pixel_count, sizeof(byte)),
-					*gb = (byte *)calloc(pixel_count, sizeof(byte)),
-					*bb = (byte *)calloc(pixel_count, sizeof(byte)),
-					*out = (byte *)calloc(pixel_count, sizeof(byte));
+				byte *rb = (byte *) calloc(pixel_count, sizeof(byte)),
+					*gb = (byte *) calloc(pixel_count, sizeof(byte)),
+					*bb = (byte *) calloc(pixel_count, sizeof(byte)),
+					*out = (byte *) calloc(pixel_count, sizeof(byte));
+				byte *line_buffer = out;
 				if (rb == nullptr || gb == nullptr || bb == nullptr || out == nullptr) {
 					perror("Unable to init color byte buffer");
-					if(rb != nullptr) free(rb);
-					if(gb != nullptr) free(gb);
-					if(bb != nullptr) free(bb);
-					if(out != nullptr) free(out);
+					if (rb != nullptr) free(rb);
+					if (gb != nullptr) free(gb);
+					if (bb != nullptr) free(bb);
+					if (out != nullptr) free(out);
 					status = EXIT_FAILURE;
 					break;
+				}
+				ColorMapObject *output_palette = GifMakeMapObject(color_count, nullptr);
+				if (output_palette == nullptr) {
+					fputs("Unable to generate gif color palette\n", stderr);
+					free(rb);
+					free(gb);
+					free(bb);
+					status = EXIT_FAILURE;
+					goto FREE_GIF;
 				}
 				for (size_t i = 0; i < pixel_count; ++i) {
 					byte b, g, r, a;
@@ -246,7 +251,7 @@ int convert_and_write_to(byte *in_file_data, uint8_t convert_to, int w, int h, u
 							b += (byte) (((float) b) * (float) (0xFF - a) / 255.0f);
 						}
 					} else {
-						r = g = b = 0; //background
+						r = g = b = lp_COLOR_BG; //background
 					}
 					rb[i] = r;
 					gb[i] = g;
@@ -258,14 +263,16 @@ int convert_and_write_to(byte *in_file_data, uint8_t convert_to, int w, int h, u
 				free(rb);
 				free(gb);
 				free(bb);
-				if(error_code != GIF_OK){
-					free(out);
+				if (error_code != GIF_OK) {
 					fputs("Unable quantize gif colors\n", stderr);
 					status = EXIT_FAILURE;
-					break;
+					goto FREE_GIF;
 				}
-				byte *line_buffer = out;
-				if(EGifPutExtension(writer, GRAPHICS_EXT_FUNC_CODE, 4, delay) == GIF_OK) {
+				//GifMakeMapObject inside EGifPutImageDesc needs color count to be power of 2
+				if(output_palette->ColorCount < color_count){
+					output_palette->ColorCount = color_count;
+				}
+				if (EGifPutExtension(writer, GRAPHICS_EXT_FUNC_CODE, 4, delay) == GIF_OK) {
 					if (EGifPutImageDesc(writer, 0, 0, w, h, false, output_palette) == GIF_OK) {
 						for (int line = 0; line < h; ++line) {
 							if (EGifPutLine(writer, line_buffer, w) != GIF_OK) {
@@ -275,7 +282,7 @@ int convert_and_write_to(byte *in_file_data, uint8_t convert_to, int w, int h, u
 							}
 							line_buffer += w;
 						}
-					} else{
+					} else {
 						fprintf(stderr, "Unable to write gif image info: %s\n", GifErrorString(writer->Error));
 						status = EXIT_FAILURE;
 					}
@@ -283,18 +290,17 @@ int convert_and_write_to(byte *in_file_data, uint8_t convert_to, int w, int h, u
 					fprintf(stderr, "Unable to write gif extension: %s\n", GifErrorString(writer->Error));
 					status = EXIT_FAILURE;
 				}
-			    free(out);
 				frame_current += frame_inc;
+				FREE_GIF:
+				free(out);
+				GifFreeMapObject(output_palette);
 			}
-FREE_MAP:
-			GifFreeMapObject(output_palette);
-CLOSE_FILE:
+
+			CLOSE_FILE:
 			if (EGifCloseFile(writer, &error_code) != GIF_OK) {
 				fprintf(stderr, "Unable to finalize GIF writer: %s\n", GifErrorString(error_code));
 				status = EXIT_FAILURE;
 			}
-			//already closed by EGifCloseFile
-//			out_file->file_pointer = nullptr;
 			break;
 		}
 		default:
@@ -473,7 +479,7 @@ int main(int argc, char **argv) {
 			break;
 		}
 		default:
-			fputs("Usage: PROG input_file|- output_file|- png|pngs|gif [resolution(128x128)] [param]\n", stderr);
+			fprintf(stderr, "Usage: %s input_file|- output_file|- png|pngs|gif [resolution(128x128)] [param]\n", argv[0]);
 			return EXIT_FAILURE;
 	}
 
@@ -490,7 +496,7 @@ int main(int argc, char **argv) {
 	if (result == EXIT_SUCCESS) {
 		byte eos[1] = {'\0'};
 		bb_append(&in_file_data, eos, 1);
-		result = convert_and_write_to(in_file_data.buffer, convert_to, (int)w, (int)h, param, &out_file);
+		result = convert_and_write_to(in_file_data.buffer, convert_to, (int) w, (int) h, param, &out_file);
 	} else
 		fputs("zlib error\n", stderr);
 

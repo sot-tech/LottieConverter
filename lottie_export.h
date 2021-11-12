@@ -51,6 +51,7 @@ using namespace rlottie;
 
 #define lp_COLOR_DEPTH 8
 #define lp_COLOR_BYTES 4
+#define lp_COLOR_BG 0
 
 typedef uint8_t byte;
 

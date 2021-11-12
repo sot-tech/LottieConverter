@@ -18,10 +18,10 @@ Uses:
 
 Parameters:
 
-* input_file - path to lottie json or tgs (gzip-ed json), if set to `-` stdin is used
-* output_file - file to be written, if set `-` stdout is used, **note, that for `pngs` type, file name prefix is required**
-* type - output format, currently supported: `png`, `gif`, `pngs`
-* resolution - size in pixels of out image, should be in `SIZExSIZE` format, default `128x128`
+* input_file - path to lottie json or tgs (gzip-ed json), if set to `-` stdin is used;
+* output_file - file to be written, if set `-` stdout is used, **note, that for `pngs` type, file name prefix is required**;
+* type - output format, currently supported: `png`, `gif`, `pngs`;
+* resolution - **desired** size in pixels of out image, should be in `SIZExSIZE` format, default `128x128`. Resulting resolution depends on input;
 * option - depends on type, default **10** for all:
     * `png` - which frame in percents to extract;
     * `pngs` and `gif` - desired frame rate.
@@ -55,18 +55,19 @@ and if 25 - delay will be exactly 4 'ticks' (5/100 sec.).
 Another GIF's problem is transparency. GIF does not support alpha channel, 
 but one of colors from frame's image palette can be marked as transparent.
 
-Now, transparent color is hardcoded to 0'th (nearest to 000 RGB), so if image contains non-background
-elements with this color, they will be marked as transparent.
+Now, transparent color is hardcoded to 0'th color in palette, so if image contains non-background
+elements with this color, they will be marked as transparent and some artifacts will appear.
 
 ## Build
 ### Basics
-1. Clone this repo or download sources from releases page
+1. Clone this repo or download sources from releases page;
 2. If cloned AND you need included `libpng`, `rlottie` or `giflib`, fetch submodules
-by executing `git submodule update --init`
+by executing `git submodule update --init`;
 3. Execute CMake build:
-   1. `mkdir build && cd build`
-   2. `cmake -DCMAKE_BUILD_TYPE=Release .. && cmake --build .`
-4. Copy or execute ready `lottieconverter` in `build` subdirectory.
+   1. `mkdir build && cd build`;
+   2. `cmake -DCMAKE_BUILD_TYPE=Release .. && cmake --build .`;
+4. (optional) Perform test conversions with `ctest` (results will appear in `test/out` directory);
+5. Copy or execute ready `lottieconverter` in `build` subdirectory.
 
 ### External libraries
 By default, project uses system's shared `libpng` library, 
@@ -76,13 +77,13 @@ You can change behaviour by providing cmake options
 (`-DSYSTEM_PNG=0 -DSYSTEM_RL=1 -DSYSTEM_GL=0` or any).
 
 Linux's development packages are usually named:
-* `libpng-dev`
-* `libgif-dev` or `giflib-dev`
-* `librlottie-dev`
+* `libpng-dev`;
+* `libgif-dev` or `giflib-dev`;
+* `librlottie-dev`.
 
 and regular library packages:
-* `libpng` or `libpng16`
-* `libgif` or `libgif7` or `giflib`
+* `libpng` or `libpng16`;
+* `libgif` or `libgif7` or `giflib`;
 * `rlottie` or `librlottie`.
 
 _NB: `zlib` (`zlib1g`) or `zlib-dev` (`zlib1g-dev`) must be pre-installed in your system._

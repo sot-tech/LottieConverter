@@ -1,0 +1,8 @@
+All stickers located inside this directory received from Telegram (Telegram
+Messenger Inc.).
+
+All rights to these works belong to their authors and are used in this project
+for testing purposes only on the principle of "fair use".
+
+Developer(s) of this project do not declare themselves as authors and do 
+not claim any other rights.

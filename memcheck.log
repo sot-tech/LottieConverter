@@ -1075,3 +1075,120 @@ Parameters: AnimatedSticker.tgs - gif 256x256 30
 ==50096==         suppressed: 0 bytes in 0 blocks
 ==50096== 
 ==50096== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
+==25029== Memcheck, a memory error detector
+==25029== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
+==25029== Using Valgrind-3.15.0 and LibVEX; rerun with -h for copyright info
+==25029== Command: build/lottieconverter cmake-build-debug/lottieconverter test/1.tgs out.gif gif 300x300 25
+==25029== 
+Usage: PROG input_file|- output_file|- png|pngs|gif [resolution(128x128)] [param]
+==25029== 
+==25029== HEAP SUMMARY:
+==25029==     in use at exit: 0 bytes in 0 blocks
+==25029==   total heap usage: 1 allocs, 1 frees, 72,704 bytes allocated
+==25029== 
+==25029== All heap blocks were freed -- no leaks are possible
+==25029== 
+==25029== For lists of detected and suppressed errors, rerun with: -s
+==25029== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
+==25116== Memcheck, a memory error detector
+==25116== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
+==25116== Using Valgrind-3.15.0 and LibVEX; rerun with -h for copyright info
+==25116== Command: build/lottieconverter cmake-build-debug/lottieconverter test/1.tgs out.gif gif 300x300 25
+==25116== 
+Usage: PROG input_file|- output_file|- png|pngs|gif [resolution(128x128)] [param]
+==25116== 
+==25116== HEAP SUMMARY:
+==25116==     in use at exit: 0 bytes in 0 blocks
+==25116==   total heap usage: 1 allocs, 1 frees, 72,704 bytes allocated
+==25116== 
+==25116== All heap blocks were freed -- no leaks are possible
+==25116== 
+==25116== For lists of detected and suppressed errors, rerun with: -s
+==25116== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
+==25285== Memcheck, a memory error detector
+==25285== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
+==25285== Using Valgrind-3.15.0 and LibVEX; rerun with -h for copyright info
+==25285== Command: build/lottieconverter cmake-build-debug/lottieconverter test/1.tgs out.gif gif 300x300 25
+==25285== 
+Usage: PROG input_file|- output_file|- png|pngs|gif [resolution(128x128)] [param]
+==25285== 
+==25285== HEAP SUMMARY:
+==25285==     in use at exit: 0 bytes in 0 blocks
+==25285==   total heap usage: 1 allocs, 1 frees, 72,704 bytes allocated
+==25285== 
+==25285== All heap blocks were freed -- no leaks are possible
+==25285== 
+==25285== For lists of detected and suppressed errors, rerun with: -s
+==25285== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
+==25770== Memcheck, a memory error detector
+==25770== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
+==25770== Using Valgrind-3.15.0 and LibVEX; rerun with -h for copyright info
+==25770== Command: build/lottieconverter cmake-build-debug/lottieconverter test/1.tgs out.gif gif 300x300 25
+==25770== 
+Usage: PROG input_file|- output_file|- png|pngs|gif [resolution(128x128)] [param]
+==25770== 
+==25770== HEAP SUMMARY:
+==25770==     in use at exit: 0 bytes in 0 blocks
+==25770==   total heap usage: 1 allocs, 1 frees, 72,704 bytes allocated
+==25770== 
+==25770== All heap blocks were freed -- no leaks are possible
+==25770== 
+==25770== For lists of detected and suppressed errors, rerun with: -s
+==25770== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
+==26324== Memcheck, a memory error detector
+==26324== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
+==26324== Using Valgrind-3.15.0 and LibVEX; rerun with -h for copyright info
+==26324== Command: build/lottieconverter cmake-build-debug/lottieconverter test/1.tgs out.gif gif 300x300 25
+==26324== 
+Usage: build/lottieconverter input_file|- output_file|- png|pngs|gif [resolution(128x128)] [param]
+==26324== 
+==26324== HEAP SUMMARY:
+==26324==     in use at exit: 0 bytes in 0 blocks
+==26324==   total heap usage: 1 allocs, 1 frees, 72,704 bytes allocated
+==26324== 
+==26324== All heap blocks were freed -- no leaks are possible
+==26324== 
+==26324== For lists of detected and suppressed errors, rerun with: -s
+==26324== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
+==26334== Memcheck, a memory error detector
+==26334== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
+==26334== Using Valgrind-3.15.0 and LibVEX; rerun with -h for copyright info
+==26334== Command: build/lottieconverter test/1.tgs out.gif gif 300x300 25
+==26334== 
+==26334== 
+==26334== HEAP SUMMARY:
+==26334==     in use at exit: 0 bytes in 0 blocks
+==26334==   total heap usage: 6,271 allocs, 6,271 frees, 17,765,588 bytes allocated
+==26334== 
+==26334== All heap blocks were freed -- no leaks are possible
+==26334== 
+==26334== For lists of detected and suppressed errors, rerun with: -s
+==26334== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
+==30932== Memcheck, a memory error detector
+==30932== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
+==30932== Using Valgrind-3.15.0 and LibVEX; rerun with -h for copyright info
+==30932== Command: build/lottieconverter test/1.tgs test/out/1.gif gif 200x200 25
+==30932== 
+==30932== 
+==30932== HEAP SUMMARY:
+==30932==     in use at exit: 0 bytes in 0 blocks
+==30932==   total heap usage: 4,441 allocs, 4,441 frees, 12,668,229 bytes allocated
+==30932== 
+==30932== All heap blocks were freed -- no leaks are possible
+==30932== 
+==30932== For lists of detected and suppressed errors, rerun with: -s
+==30932== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
+==31128== Memcheck, a memory error detector
+==31128== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
+==31128== Using Valgrind-3.15.0 and LibVEX; rerun with -h for copyright info
+==31128== Command: build/lottieconverter test/1.tgs test/out/1.gif gif 200x200 10
+==31128== 
+==31128== 
+==31128== HEAP SUMMARY:
+==31128==     in use at exit: 0 bytes in 0 blocks
+==31128==   total heap usage: 3,359 allocs, 3,359 frees, 5,894,416 bytes allocated
+==31128== 
+==31128== All heap blocks were freed -- no leaks are possible
+==31128== 
+==31128== For lists of detected and suppressed errors, rerun with: -s
+==31128== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
