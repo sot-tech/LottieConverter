@@ -20,9 +20,9 @@ else(CMAKE_BUILD_TYPE)
     set(COMPILE_PARAMS ${COMPILE_PARAMS} -O0 -g3)
 endif()
 
-option(SYSTEM_PNG "Use system dynamic png library instead of building static one" 1)
-option(SYSTEM_RL "Use system dynamic rlottie library instead of building static one" 0)
-option(SYSTEM_GL "Use system dynamic giflib library instead of building static one" 0)
+option(SYSTEM_PNG "Use system dynamic libpng" 1)
+option(SYSTEM_RL "Use system dynamic rlottie" 0)
+option(SYSTEM_GL "Use system shared giflib" 0)
 
 find_package(ZLIB ${ZLIB_MINIMUM} REQUIRED)
 

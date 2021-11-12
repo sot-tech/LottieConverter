@@ -87,7 +87,6 @@ int convert_and_write_to(byte *in_file_data, uint8_t convert_to, int w, int h, u
 		return EXIT_FAILURE;
 	}
 	size_t frame_count = animation->totalFrame();
-	auto frame_inc = (float)animation->frameRate() / (float)param;
 	unique_ptr<uint32_t[]> buffer = unique_ptr<uint32_t[]>(new uint32_t[w * h]);
 	if (buffer == nullptr) {
 		fputs("Unable to init frame buffer\n", stderr);
@@ -95,6 +94,10 @@ int convert_and_write_to(byte *in_file_data, uint8_t convert_to, int w, int h, u
 	}
 	switch (convert_to) {
 		case li_OUT_PNG: {
+			if(param > 100){
+				fputs("Frame percent must be between 0 and 100\n", stderr);
+				return EXIT_FAILURE;
+			}
 			size_t frame_to_extract = frame_count * param / 100;
 			if (frame_to_extract > frame_count - 1) frame_to_extract = frame_count - 1;
 			Surface surface(buffer.get(), w, h, w * lp_COLOR_BYTES);
@@ -102,7 +105,11 @@ int convert_and_write_to(byte *in_file_data, uint8_t convert_to, int w, int h, u
 			return write_png(reinterpret_cast<byte *> (buffer.get()), w, h, out_file->file_pointer);
 		}
 		case li_OUT_PNGS: {
-			float frame_current = 0.0f;
+			if(param == 0){
+				fputs("Framerate must not be 0\n", stderr);
+				return EXIT_FAILURE;
+			}
+			float frame_current = 0.0f, frame_inc = (float)animation->frameRate() / (float)param;
 			auto frame_count_out = (size_t)((float)frame_count / frame_inc);
 			size_t frame_count_out_t = frame_count_out;
 			unsigned int digit_count = 1, frame_number = 0;
@@ -146,10 +153,10 @@ int convert_and_write_to(byte *in_file_data, uint8_t convert_to, int w, int h, u
 		}
 		case li_OUT_GIF: {
 			if(param == 0 || param > 100){
-				fputs("GIF framerate must be between 1 and 100", stderr);
+				fputs("GIF framerate must be between 1 and 100\n", stderr);
 				return EXIT_FAILURE;
 			}
-			float frame_current = 0.0f;
+			float frame_current = 0.0f, frame_inc = (float)animation->frameRate() / (float)param;;
 			int error_code = 0;
 			GifFileType *writer = EGifOpenFileHandle(fileno(out_file->file_pointer), &error_code);
 			if (writer == nullptr || error_code != 0) {
@@ -157,19 +164,24 @@ int convert_and_write_to(byte *in_file_data, uint8_t convert_to, int w, int h, u
 				return EXIT_FAILURE;
 			}
 			int color_map_size = 1 << lp_COLOR_DEPTH;
-			byte loop[]{1, 0, 0}; //infinite gif loop
-			static byte delay[4] = {0x0D,   // Bit 0 - flag if transparent index given (checked),
+			byte hs_delay = (byte)lround(100.0f/(float)param);
+			if(hs_delay == 1){ //if delay set to 1 (1/100 sec) animation became very slo-o-ow
+				hs_delay = 2;
+				frame_inc *= 2.0f;
+			}
+            byte loop[]{1, 0, 0}, //infinite gif loop
+			        delay[4] = {    0x0D,   // Bit 0 - flag if transparent index given (checked),
 												// Bit 1 - User Input Flag (unchecked),
 												// Bits 2-4 - Disposal Method:
 												//      0 - unspecified,
 												//      1 - don't dispose,
 												//      2 - restore to background color,
 												//      3 - restore to previous (checked)
-                                            10,    // >Hundredths of
-		                                     0,                     // seconds to wait<
+                                            hs_delay,    // >Hundredths of
+		                                     0,          // seconds to wait<
 				                             0};    // Transparent color index //TODO: try to calculate
 			ColorMapObject *output_palette = GifMakeMapObject(color_map_size, nullptr);
-			if(output_palette == nullptr){
+			if(output_palette == nullptr) {
 				status = EXIT_FAILURE;
 				goto CLOSE_FILE;
 			}
@@ -281,7 +293,7 @@ CLOSE_FILE:
 				status = EXIT_FAILURE;
 			}
 			//already closed by EGifCloseFile
-			out_file->file_pointer = nullptr;
+//			out_file->file_pointer = nullptr;
 			break;
 		}
 		default:
@@ -372,7 +384,7 @@ int unzip(FILE *in_file, byte_buffer *out_data) {
 
 int main(int argc, char **argv) {
 
-	uint32_t param = 1;
+	uint32_t param = 10;
 	uint8_t convert_to = li_OUT_PNG;
 	unsigned long w = 128, h = 128;
 	FILE *in_file = stdin;
