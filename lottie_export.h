@@ -1,23 +1,4 @@
 /*
- * Copyright (C) 2019 sot.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
- * MA 02110-1301  USA
- */
-
-/* 
  * File:   lottie_export.h
  * Author: sot
  *
@@ -27,13 +8,21 @@
 #ifndef LOTTIE_EXPORT_H
 #define LOTTIE_EXPORT_H
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <stdbool.h>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
+#include <cmath>
 #include <zlib.h>
 #include <png.h>
 #include <rlottie.h>
+#include <gif_lib.h>
+
+//include from getarg.h
+extern "C" int GifQuantizeBuffer(unsigned int Width, unsigned int Height,
+                                 int *ColorMapSize, GifByteType * RedInput,
+                                 GifByteType * GreenInput, GifByteType * BlueInput,
+                                 GifByteType * OutputBuffer,
+                                 GifColorType * OutputColorMap);
 
 using namespace std;
 using namespace rlottie;
@@ -62,26 +51,33 @@ using namespace rlottie;
 
 #define lp_COLOR_DEPTH 8
 #define lp_COLOR_BYTES 4
+#define lp_COLOR_BG 0
 
 typedef uint8_t byte;
 
 struct byte_buffer {
-	byte * buffer = NULL;
+	byte_buffer()=default;
+	byte * buffer = nullptr;
 	size_t size = 0;
 };
 
 struct file {
-	FILE * file_pointer = NULL;
-	char * path = NULL;
-};
+	FILE * file_pointer = nullptr;
+	char * path = nullptr;
 
-#define bb_init() {.buffer = NULL, .size = 0}
+	file(FILE * fd, char * p){
+		file_pointer = fd;
+		path = p;
+	}
+	void close() const{
+		if (file_pointer != nullptr) fclose(file_pointer);
+	}
+};
 
 int bb_append(byte_buffer * bb, byte * data, size_t data_size) {
 	
 	bb->buffer = (byte *) realloc(bb->buffer, (bb->size + data_size) * sizeof (byte));
-	if (bb->buffer == NULL) {
-		perror("Unable to extend byte buffer");
+	if (bb->buffer == nullptr) {
 		return EXIT_FAILURE;
 	}
 	memset(bb->buffer + bb->size, 0, data_size);
@@ -89,9 +85,6 @@ int bb_append(byte_buffer * bb, byte * data, size_t data_size) {
 	bb->size += data_size;
 	return EXIT_SUCCESS;
 }
-
-#define file_init(_fp_, _path_) { .file_pointer = (_fp_), .path = (_path_) }
-#define file_close(_file_) { if ((_file_).file_pointer != NULL) fclose((_file_).file_pointer); }
 
 #endif /* LOTTIE_EXPORT_H */
 

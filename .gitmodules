@@ -1,0 +1,9 @@
+[submodule "3p/giflib"]
+	path = lib/giflib
+	url = git://git.code.sf.net/p/giflib/code
+[submodule "3p/rlottie"]
+	path = lib/rlottie
+	url = https://github.com/Samsung/rlottie.git
+[submodule "3p/libpng"]
+	path = lib/libpng
+	url = git://git.code.sf.net/p/libpng/code

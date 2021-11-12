@@ -1,6 +1,5 @@
+/.idea
 /build
 /dist
-/nbproject/private
-/AnimatedSticker.tgs
-/AnimatedSticker.json
-/out*
+/cmake-build*
+/test/out
