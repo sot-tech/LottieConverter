@@ -28,7 +28,7 @@ int write_png(byte *buffer, size_t w, size_t h, FILE *out_file) {
 
 	if (setjmp(png_jmpbuf(png_ptr))) {
 		png_destroy_write_struct(&png_ptr, &info_ptr);
-		fputs("PNG export failed: longjump failed\n", stderr);
+		fputs("PNG export failed: longjump error\n", stderr);
 		return EXIT_FAILURE;
 	}
 
@@ -178,7 +178,7 @@ int convert_and_write_to(byte *in_file_data, uint8_t convert_to, int w, int h, u
 				//      3 - restore to previous (checked)
 				        hs_delay,    // >Hundredths of
 				        0,          // seconds to wait<
-				        lp_COLOR_BG    // Transparent color index //TODO: try to calculate
+				        lp_COLOR_BG    // Transparent color index
 			};
 			int color_count = 1 << lp_COLOR_DEPTH;
 			EGifSetGifVersion(writer, true);
@@ -269,7 +269,7 @@ int convert_and_write_to(byte *in_file_data, uint8_t convert_to, int w, int h, u
 					goto FREE_GIF;
 				}
 				//GifMakeMapObject inside EGifPutImageDesc needs color count to be power of 2
-				if(output_palette->ColorCount < color_count){
+				if (output_palette->ColorCount < color_count) {
 					output_palette->ColorCount = color_count;
 				}
 				if (EGifPutExtension(writer, GRAPHICS_EXT_FUNC_CODE, 4, delay) == GIF_OK) {
@@ -322,7 +322,7 @@ int unzip(FILE *in_file, byte_buffer *out_data) {
 	strm.avail_in = 0;
 
 
-	if (inflateInit2(&strm, lz_WINDOWN_BITS | lz_ENABLE_ZLIB_GZIP) < 0) {
+	if (inflateInit2(&strm, lz_WINDOW_BITS | lz_ENABLE_ZLIB_GZIP) < 0) {
 		fputs("Unable to init zlib\n", stderr);
 		return EXIT_FAILURE;
 	}
@@ -355,7 +355,7 @@ int unzip(FILE *in_file, byte_buffer *out_data) {
 					if (first_read) {
 						do {
 							if (bb_append(out_data, in, bytes_read) == EXIT_FAILURE) {
-								fputs("Unable to allocate memory\n", stderr);
+								fputs("Unable to allocate memory for unpacking\n", stderr);
 								return EXIT_FAILURE;
 							}
 							bytes_read = fread(in, sizeof(byte), sizeof(in), in_file);
@@ -371,12 +371,12 @@ int unzip(FILE *in_file, byte_buffer *out_data) {
 					}
 				default:
 					inflateEnd(&strm);
-					fprintf(stderr, "zlib error %d.\n", zlib_status);
+					fprintf(stderr, "Unexpected zlib status: %d.\n", zlib_status);
 					return EXIT_FAILURE;
 			}
 			have = lz_CHUNK_SIZE - strm.avail_out;
 			if (bb_append(out_data, out, have) == EXIT_FAILURE) {
-				fputs("Unable to allocate memory\n", stderr);
+				fputs("Unable to allocate memory for unpacked data\n", stderr);
 				return EXIT_FAILURE;
 			}
 		} while (strm.avail_out == 0);
@@ -408,7 +408,7 @@ int main(int argc, char **argv) {
 			if (len > 3 && index_of_x > 0 && index_of_x < len - 1) {
 				char *res = (char *) calloc(len, sizeof(char));
 				if (res == nullptr) {
-					perror("Resolution error");
+					perror("Unable to parse resolution");
 					return EXIT_FAILURE;
 				}
 				memset(res, '\0', len);
@@ -420,11 +420,11 @@ int main(int argc, char **argv) {
 				h = strtoul(argv[argi], nullptr, 10);
 				free(res);
 				if (h == 0 || w == 0 || h > li_MAX_DIMENSION || w > li_MAX_DIMENSION) {
-					fputs("Invalid resolution\n", stderr);
+					fprintf(stderr, "Invalid resolution, maximum supported is %d\n", li_MAX_DIMENSION);
 					return EXIT_FAILURE;
 				}
 			} else {
-				fputs("Invalid resolution\n", stderr);
+				fputs("Unable to parse resolution\n", stderr);
 				return EXIT_FAILURE;
 			}
 		}
@@ -437,7 +437,7 @@ int main(int argc, char **argv) {
 			} else if (!strcmp(argv[argi], ls_OUT_GIF)) {
 				convert_to = li_OUT_GIF;
 			} else {
-				fputs("Unsupported out format\n", stderr);
+				fputs("Unsupported out format, supported: png, pngs, gif\n", stderr);
 				return EXIT_FAILURE;
 			}
 		}
@@ -479,7 +479,8 @@ int main(int argc, char **argv) {
 			break;
 		}
 		default:
-			fprintf(stderr, "Usage: %s input_file|- output_file|- png|pngs|gif [resolution(128x128)] [param]\n", argv[0]);
+			fprintf(stderr, "Usage: %s input_file|- output_file|- png|pngs|gif [resolution(128x128)] [param]\n",
+			        argv[0]);
 			return EXIT_FAILURE;
 	}
 
@@ -498,7 +499,7 @@ int main(int argc, char **argv) {
 		bb_append(&in_file_data, eos, 1);
 		result = convert_and_write_to(in_file_data.buffer, convert_to, (int) w, (int) h, param, &out_file);
 	} else
-		fputs("zlib error\n", stderr);
+		fputs("Unable to unpack data, zlib error\n", stderr);
 
 	free(in_file_data.buffer);
 	out_file.close();

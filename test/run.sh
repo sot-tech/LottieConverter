@@ -18,8 +18,8 @@ function ck {
 }
 
 ck "$EXE" "$IN"/1.tgs "$OUT"/1.png png
-ck "$EXE" "$IN"/2.tgs "$OUT"/2.png png 200x200
-ck "$EXE" "$IN"/3.tgs "$OUT"/3.png png 500x500 100
+ck "$EXE" "$IN"/2.tgs "$OUT"/2.png png 1000x1000
+ck "$EXE" "$IN"/3.tgs "$OUT"/3.png png 8000x8000 100
 ck "$EXE" "$IN"/4.tgs "$OUT"/4_ pngs 100x100 5
 cat "$IN"/5.json | ck "$EXE" - "$OUT"/5.gif gif 100x100 25
 ck "$EXE" "$IN"/6.json - gif 200x200 50 > "$OUT"/6.gif

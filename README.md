@@ -50,7 +50,7 @@ GIF's minimum delay between frames is 1/100 second, so maximum framerate (value 
 For the same reason, it is better to choose framerate value which is common factor of 100: 1, 2, 5, 10, 20, 25, 50 (100 is not recommended).
 
 If `option` set to 30, delay will be rounded to 3 'ticks' (3/100 sec.), but GIF speed will be a little faster than original (round from 3.333... to 3),
-and if 25 - delay will be exactly 4 'ticks' (5/100 sec.).
+and if 25 - delay will be exactly 4 'ticks' (4/100 sec.).
 
 Another GIF's problem is transparency. GIF does not support alpha channel, 
 but one of colors from frame's image palette can be marked as transparent.

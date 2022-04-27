@@ -19,10 +19,10 @@
 
 //include from getarg.h
 extern "C" int GifQuantizeBuffer(unsigned int Width, unsigned int Height,
-                                 int *ColorMapSize, GifByteType * RedInput,
-                                 GifByteType * GreenInput, GifByteType * BlueInput,
-                                 GifByteType * OutputBuffer,
-                                 GifColorType * OutputColorMap);
+                                 int *ColorMapSize, GifByteType *RedInput,
+                                 GifByteType *GreenInput, GifByteType *BlueInput,
+                                 GifByteType *OutputBuffer,
+                                 GifColorType *OutputColorMap);
 
 using namespace std;
 using namespace rlottie;
@@ -35,7 +35,7 @@ using namespace rlottie;
 #define SET_BINARY_MODE(file)
 #endif
 
-#define li_MAX_DIMENSION 4000
+#define li_MAX_DIMENSION 16384
 
 #define li_OUT_PNG 0
 #define li_OUT_PNGS 1
@@ -46,7 +46,7 @@ using namespace rlottie;
 #define ls_OUT_PNGS_SUFFIX "%0*u.png"
 
 #define lz_CHUNK_SIZE 0x4000
-#define lz_WINDOWN_BITS 15
+#define lz_WINDOW_BITS 15
 #define lz_ENABLE_ZLIB_GZIP 32
 
 #define lp_COLOR_DEPTH 8
@@ -56,27 +56,29 @@ using namespace rlottie;
 typedef uint8_t byte;
 
 struct byte_buffer {
-	byte_buffer()=default;
-	byte * buffer = nullptr;
+	byte_buffer() = default;
+
+	byte *buffer = nullptr;
 	size_t size = 0;
 };
 
 struct file {
-	FILE * file_pointer = nullptr;
-	char * path = nullptr;
+	FILE *file_pointer = nullptr;
+	char *path = nullptr;
 
-	file(FILE * fd, char * p){
+	file(FILE *fd, char *p) {
 		file_pointer = fd;
 		path = p;
 	}
-	void close() const{
+
+	void close() const {
 		if (file_pointer != nullptr) fclose(file_pointer);
 	}
 };
 
-int bb_append(byte_buffer * bb, byte * data, size_t data_size) {
-	
-	bb->buffer = (byte *) realloc(bb->buffer, (bb->size + data_size) * sizeof (byte));
+int bb_append(byte_buffer *bb, byte *data, size_t data_size) {
+
+	bb->buffer = (byte *) realloc(bb->buffer, (bb->size + data_size) * sizeof(byte));
 	if (bb->buffer == nullptr) {
 		return EXIT_FAILURE;
 	}
