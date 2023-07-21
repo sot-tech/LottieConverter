@@ -16,12 +16,6 @@ set(LIBS z)
 set(INCLUDES)
 add_executable(${PROJECT_NAME})
 
-if (CMAKE_BUILD_TYPE EQUAL "RELEASE")
-    set(COMPILE_PARAMS ${COMPILE_PARAMS} -O2)
-else (CMAKE_BUILD_TYPE)
-    set(COMPILE_PARAMS ${COMPILE_PARAMS} -O0 -g3)
-endif ()
-
 option(SYSTEM_PNG "Use system dynamic libpng" 1)
 option(SYSTEM_RL "Use system dynamic rlottie" 0)
 option(SYSTEM_GL "Use system shared giflib" 0)

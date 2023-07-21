@@ -127,12 +127,12 @@ int convert_and_write_to(byte *in_file_data, uint8_t convert_to, int w, int h, u
 				return EXIT_FAILURE;
 			}
 			memset(file_name_template, '\0', FILENAME_MAX);
-			strncpy(file_name_template, out_file->path, FILENAME_MAX);
-			strncat(file_name_template, ls_OUT_PNGS_SUFFIX, FILENAME_MAX);
+			strncpy(file_name_template, out_file->path, FILENAME_MAX - 1);
+			strncat(file_name_template, ls_OUT_PNGS_SUFFIX, FILENAME_MAX - 1);
 			while (frame_current < (float) frame_count) {
 				FILE *fp;
 				memset(file_name, '\0', FILENAME_MAX);
-				snprintf(file_name, FILENAME_MAX, file_name_template, digit_count, frame_number++);
+				snprintf(file_name, FILENAME_MAX - 1, file_name_template, digit_count, frame_number++);
 				if ((fp = fopen(file_name, "wb")) == nullptr) {
 					perror("Unable to write png frame\n");
 					result = EXIT_FAILURE;

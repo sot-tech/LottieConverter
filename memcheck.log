@@ -1,14 +1,14 @@
-==20015== Memcheck, a memory error detector
-==20015== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
-==20015== Using Valgrind-3.15.0 and LibVEX; rerun with -h for copyright info
-==20015== Command: build/lottieconverter /home/sot/Downloads/AnimatedSticker.tgs out.gif gif 300x300 25
-==20015== 
-==20015== 
-==20015== HEAP SUMMARY:
-==20015==     in use at exit: 0 bytes in 0 blocks
-==20015==   total heap usage: 31,547 allocs, 31,547 frees, 108,621,033 bytes allocated
-==20015== 
-==20015== All heap blocks were freed -- no leaks are possible
-==20015== 
-==20015== For lists of detected and suppressed errors, rerun with: -s
-==20015== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
+==28788== Memcheck, a memory error detector
+==28788== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
+==28788== Using Valgrind-3.18.1 and LibVEX; rerun with -h for copyright info
+==28788== Command: build/lottieconverter test/7.json test/out/7.gif gif 500x500 100
+==28788== 
+==28788== 
+==28788== HEAP SUMMARY:
+==28788==     in use at exit: 0 bytes in 0 blocks
+==28788==   total heap usage: 51,273 allocs, 51,273 frees, 291,627,597 bytes allocated
+==28788== 
+==28788== All heap blocks were freed -- no leaks are possible
+==28788== 
+==28788== For lists of detected and suppressed errors, rerun with: -s
+==28788== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
