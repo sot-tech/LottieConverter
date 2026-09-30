@@ -114,5 +114,3 @@ _NB: `zlib` (`zlib1g`) or `zlib-dev` (`zlib1g-dev`) must be pre-installed in you
 
 Versions v0.1.1 and earlier have been licensed under GNU LGPL 2.1.
 Actual revision is licenced under BSD-3-Clause.
-
-The changes that I've made to this can remain under BSD-3-Clause.
